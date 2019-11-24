@@ -7,26 +7,22 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      component: () => import('@/components/Index')
-    },
-    {
-      path: '/index',
       component: () => import('@/components/Index'),
       redirect: '/home',
       children: [
         {
           path: '/home',
           component: () => import('@/components/Home')
+        },
+        {
+          path: '/config',
+          component: () => import('@/components/Config')
         }
       ]
     },
     {
       path: '/application',
       component: () => import('@/components/Application')
-    },
-    {
-      path: '/config',
-      component: () => import('@/components/Config')
     },
     {
       path: '/login',

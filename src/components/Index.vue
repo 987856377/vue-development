@@ -10,7 +10,7 @@
     <el-container style="height: 100%;">
       <el-aside width="200px">
         <el-menu class="el-menu-vertical-demo" :router="true" unique-opened>
-          <el-menu-item index="/home" default-active>首页</el-menu-item>
+          <el-menu-item index="/home">首页</el-menu-item>
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -80,7 +80,7 @@
               <span slot="title">个人设置</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="7-1">完善资料</el-menu-item>
+              <el-menu-item index="/config">完善资料</el-menu-item>
               <el-menu-item index="7-2">修改密码</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
