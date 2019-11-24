@@ -1,0 +1,6 @@
+{
+//  取消分号
+  "semi": false,
+//  用单引号表示字符串
+  "singleQuote": true
+}

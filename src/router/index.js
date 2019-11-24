@@ -3,15 +3,22 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
-      component: () => import('@/components/Home')
+      component: () => import('@/components/Index')
     },
     {
       path: '/index',
-      component: () => import('@/components/Home')
+      component: () => import('@/components/Index'),
+      redirect: '/home',
+      children: [
+        {
+          path: '/home',
+          component: () => import('@/components/Home')
+        }
+      ]
     },
     {
       path: '/application',
@@ -24,10 +31,23 @@ export default new Router({
     {
       path: '/login',
       component: () => import('@/components/Login')
-    },
-    {
-      path: '/login',
-      component: () => import('@/components/Login')
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+//  to 将要访问的路径
+//  from 代表从哪个路径跳转而来
+//  next 是一个函数, 表示放行
+  if (to.path === '/login') {
+    return next()
+  }
+  //  获取token
+  const token = window.sessionStorage.getItem('Authorization')
+  if (!token) {
+    return next('/login')
+  }
+  next()
+})
+
+export default router

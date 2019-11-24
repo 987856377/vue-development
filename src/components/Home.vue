@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>{{msg}}</h1>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table :data="tableData" style="width: 100%; height: 220px">
       <el-table-column fixed prop="date" label="日期" sortable width="150">
       </el-table-column>
       <el-table-column prop="name" label="姓名" width="120">
@@ -31,39 +30,39 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        page: {
-          current: 1,
-          size: 5
-        },
-        msg: '首页',
-        tableData: [],
-        multipleSelection: []
+export default {
+  data () {
+    return {
+      page: {
+        current: 1,
+        size: 5
+      },
+      msg: '首页',
+      tableData: [],
+      multipleSelection: []
+    }
+  },
+  mounted () {
+    this.getData()
+  },
+  methods: {
+    handleClick (row) {
+      console.log(row)
+    },
+    getData () {
+      this.$axios.post('userinfo/getUserInfoByPage', this.page).then(res => {
+        console.log(res)
+        if (res.data.code === 200) {
+          this.tableData = res.data.data.records
+        }
+      },
+      error => {
+        console.log(error)
       }
-    },
-    mounted() {
-      this.getData();
-    },
-    methods: {
-      handleClick(row) {
-        console.log(row)
-      },
-      getData(){
-        this.$axios.post('userinfo/getUserInfoByPage',this.page).then(res => {
-            console.log(res)
-            if(res.data.code == '200'){
-              this.tableData=res.data.data.records
-            }
-          },
-          error => {
-            console.log(error)
-          }
-        )
-      },
+      )
     }
   }
+}
 </script>
 
 <style>

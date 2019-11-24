@@ -2,13 +2,13 @@
   <div class="login_container">
     <div class="login_box">
       <div class="avatar_box">
-        <img src="../assets/logo.png" alt="" />
+        <img src="../assets/logo.png" alt=""/>
       </div>
       <!-- 登录表单区域 -->
       <el-form ref="loginFormRef" label-width="0px" :model="user" :rules="rules" class="form-login">
         <!-- 用户名 -->
         <el-form-item prop="username">
-          <el-input v-model="user.username" prefix-icon="el-icon-service"></el-input>
+          <el-input v-model="user.username" prefix-icon="el-icon-view"></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
@@ -25,45 +25,48 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
+export default {
+  data () {
+    return {
 
-        user: {
-          username: '',
-          password: ''
-        },
-
-        rules: {
-          username: [{required: true,message: '请输入用户名',trigger: 'blur'},
-            {min: 3,max: 16, message: '长度在 3 到 16 个字符',trigger: 'blur'}
-          ],
-          password: [{required: true,message: '请输入密码',trigger: 'blur'},
-            {min: 3,max: 16,message: '长度在 3 到 16 个字符',trigger: 'blur'}
-          ],
-        }
-      }
-    },
-    methods:{
-      login() {
-        this.$refs.loginFormRef.validate(async valid=>{
-          if(!valid){ return; }
-          const result = await this.$axios.post('login', this.$qs.stringify(this.user));
-          if(result.status == 200){
-            window.sessionStorage.setItem("Authorization",result.headers.authorization)
-            this.$router.push("/")
-            this.$message.success("登录成功");
-          }
-          else{
-            this.$message.error("登录失败");
-          }
-        });
+      user: {
+        username: '',
+        password: ''
       },
-      reset(){
-        this.$refs.loginFormRef.resetFields();
+
+      rules: {
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ]
       }
     }
+  },
+  methods: {
+    login () {
+      this.$refs.loginFormRef.validate(async valid => {
+        if (!valid) {
+          return
+        }
+        await this.$axios.post('login', this.$qs.stringify(this.user)).then(res => {
+          if (res.data.code === 409) {
+            return this.$message.error('登录失败')
+          }
+          window.sessionStorage.setItem('Authorization', res.headers.authorization)
+          this.$router.push('/')
+          return this.$message.success('登录成功')
+        }).catch(res => {
+          return this.$message.error('登录失败')
+        })
+      })
+    },
+    reset () {
+      this.$refs.loginFormRef.resetFields()
+    }
   }
+}
 </script>
 
 <style scoped>
@@ -106,7 +109,7 @@
     position: absolute;
     bottom: 0;
     width: 100%;
-    padding: 0 1.25rem;
+    padding: 20px;
     box-sizing: border-box;
   }
 </style>

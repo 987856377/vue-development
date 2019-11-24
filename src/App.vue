@@ -1,19 +1,19 @@
 <template>
   <div id="app">
-    <index />
-<!--    <router-view /> -->
+    <router-view />
   </div>
 </template>
 
 <script>
-  import Index from '@/components/Index'
-
-  export default {
-    name: 'app',
-    components: {
-      Index
-    }
+import Login from '@/components/Login'
+import Index from '@/components/Index'
+export default {
+  name: 'app',
+  components: {
+    Login,
+    Index
   }
+}
 </script>
 
 <style>

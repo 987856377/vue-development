@@ -5,13 +5,13 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        msg: '配置管理'
-      }
+export default {
+  data () {
+    return {
+      msg: '配置管理'
     }
   }
+}
 </script>
 
 <style>

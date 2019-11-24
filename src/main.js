@@ -12,9 +12,9 @@ import './assets/css/index.css'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-Vue.prototype.$echarts = ecahrts;
-Vue.prototype.$axios = axios;
-Vue.prototype.$qs = qs;
+Vue.prototype.$echarts = ecahrts
+Vue.prototype.$axios = axios
+Vue.prototype.$qs = qs
 // 配置请求根路径
 axios.defaults.baseURL = '/'
 // axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8'
@@ -30,29 +30,29 @@ axios.defaults.baseURL = '/'
 // });
 // 添加响应拦截器
 axios.interceptors.request.use(
-	config => {
+  config => {
     // config.headers = {
     //    'Content-Type': 'application/json;charset=utf-8',
     //    'X-Requested-With':'XMLHttpRequest'
     // }
-    let token = window.sessionStorage.getItem("Authorization")
-    if(token){
-      config.headers.Authorization = `${token}`;
+    let token = window.sessionStorage.getItem('Authorization')
+    if (token) {
+      config.headers.Authorization = `${token}`
     }
-    console.log("Authorization: "+config.headers.Authorization)
+    console.log('Authorization: ' + config.headers.Authorization)
     // 以表单形式提交 post 请求
-		// if (config.method === 'post') {
-		// 	config.data = qs.stringify(config.data)
+    // if (config.method === 'post') {
+    // eslint-disable-next-line no-tabs
+    // 	config.data = qs.stringify(config.data)
     //     console.log(config.data)
-		// }
-		return config
-	},
-	error => {
-		console.log(error)
-		Promise.reject(error)
-	}
-);
-
+    // }
+    return config
+  },
+  error => {
+    console.log(error)
+    Promise.reject(error)
+  }
+)
 
 /* eslint-disable no-new */
 new Vue({
