@@ -50,14 +50,15 @@ export default {
         if (!valid) {
           return
         }
-        await this.$axios.post('login', this.$qs.stringify(this.user)).then(res => {
-          if (res.data.code === 409) {
+        await this.$axios.post('login', this.$qs.stringify(this.user)).then(result => {
+          if (result.data.code === 409) {
             return this.$message.error('登录失败')
           }
-          window.sessionStorage.setItem('Authorization', res.headers.authorization)
+          window.sessionStorage.setItem('Authorization', result.headers.authorization)
           this.$router.push('/')
           return this.$message.success('登录成功')
-        }).catch(res => {
+          // eslint-disable-next-line handle-callback-err
+        }).catch(error => {
           return this.$message.error('登录失败')
         })
       })

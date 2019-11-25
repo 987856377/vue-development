@@ -18,13 +18,13 @@
             </template>
             <el-menu-item-group>
               <el-menu-item index="1-1">机构入驻</el-menu-item>
-              <el-menu-item index="1-2">机构列表</el-menu-item>
+              <el-menu-item index="/orgs">机构列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-service"></i>
-              <span slot="title">用户管理</span>
+              <span slot="title">人员维护</span>
             </template>
             <el-menu-item-group>
               <el-menu-item index="2-1">添加用户</el-menu-item>
@@ -33,7 +33,7 @@
           </el-submenu>
           <el-submenu index="3">
             <template slot="title">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-tickets"></i>
               <span slot="title">权限控制</span>
             </template>
             <el-menu-item-group>
@@ -43,7 +43,7 @@
           </el-submenu>
           <el-submenu index="4">
             <template slot="title">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-refresh"></i>
               <span slot="title">处方流转</span>
             </template>
             <el-menu-item-group>
@@ -53,7 +53,7 @@
           </el-submenu>
           <el-submenu index="5">
             <template slot="title">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-date"></i>
               <span slot="title">数据统计</span>
             </template>
             <el-menu-item-group>
@@ -64,7 +64,7 @@
           </el-submenu>
           <el-submenu index="6">
             <template slot="title">
-              <i class="el-icon-setting"></i>
+              <i class="el-icon-time"></i>
               <span slot="title">消息详情</span>
             </template>
             <el-menu-item-group>
