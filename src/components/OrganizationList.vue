@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column prop="flag" label="启用状态" width="120">
           <template slot-scope="scope">
-            <el-switch  @change="stateChanged(scope.row)">
+            <el-switch v-model="scope.row.flag"  @change="stateChanged(scope.row)">
             </el-switch>
           </template>
         </el-table-column>
