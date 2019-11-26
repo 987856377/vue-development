@@ -16,7 +16,7 @@
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
-          <el-button type="primary" @click='login'>登录</el-button>
+          <el-button type="primary" @click='login' v-loading.fullscreen.lock="loading">登录</el-button>
           <el-button type="info" @click='reset'>重置</el-button>
         </el-form-item>
       </el-form>
@@ -33,7 +33,7 @@ export default {
         username: '',
         password: ''
       },
-
+      loading: false,
       rules: {
         username: [{ required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
@@ -50,15 +50,19 @@ export default {
         if (!valid) {
           return
         }
+        this.loading = true
         await this.$axios.post('login', this.$qs.stringify(this.user)).then(result => {
           if (result.data.code === 409) {
+            this.loading = false
             return this.$message.error('登录失败')
           }
           window.sessionStorage.setItem('Authorization', result.headers.authorization)
           this.$router.push('/')
+          this.loading = false
           return this.$message.success('登录成功')
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
+          this.loading = false
           return this.$message.error('登录失败')
         })
       })
