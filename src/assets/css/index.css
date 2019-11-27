@@ -21,7 +21,3 @@ html, body, #app{
 .el-pagination{
   margin-top: 15px;
 }
-
-.el-dialog{
-  font-size: 6px;
-}
