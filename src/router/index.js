@@ -15,6 +15,10 @@ const router = new Router({
           component: () => import('@/components/Home')
         },
         {
+          path: '/addOrg',
+          component: () => import('@/components/AddOrg')
+        },
+        {
           path: '/orgs',
           component: () => import('@/components/OrganizationList')
         },

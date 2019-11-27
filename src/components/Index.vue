@@ -17,7 +17,7 @@
               <span slot="title">机构管理</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="1-1">机构入驻</el-menu-item>
+              <el-menu-item index="/addOrg">机构入驻</el-menu-item>
               <el-menu-item index="/orgs">机构列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>

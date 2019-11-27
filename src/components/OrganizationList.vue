@@ -11,14 +11,15 @@
 <!--      搜索与添加-->
       <el-row>
         <el-col :span="7">
-          <el-input placeholder="请输入内容" v-model="query" clearable @clear="getOrgList">
+          <el-input placeholder="请输入机构名称" v-model="query" clearable @clear="getOrgList">
             <el-button slot="append" icon="el-icon-search" @click="getOrgByName"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4"></el-col>
       </el-row>
 <!--      表单-->
-      <el-table :data="tableData" style="width: 100%" max-height="520" stripe border>
+      <el-table :data="tableData" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
+                element-loading-spinner="el-icon-loading">
         <el-table-column fixed prop="date" label="注册日期" sortable width="140">
         </el-table-column>
         <el-table-column prop="name" label="机构名称" width="120">
@@ -33,31 +34,43 @@
         </el-table-column>
         <el-table-column prop="officer" label="法人代表" width="120">
         </el-table-column>
-<!--        <el-table-column prop="relation" label="隶属关系" width="120">-->
-<!--          <template slot-scope="scope">-->
-<!--            {{ relationObj[scope.row.relation] }}-->
-<!--          </template>-->
-<!--        </el-table-column>-->
+        <el-table-column prop="classify" label="机构分类" width="120">
+          <template slot-scope="scope">
+            {{ classifyObj[scope.row.classify] }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="relation" label="隶属关系" width="140">
+          <template slot-scope="scope">
+            {{ relationObj[scope.row.relation] }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="host" label="单位类型" width="120">
+          <template slot-scope="scope">
+            {{ hostObj[scope.row.host] }}
+          </template>
+        </el-table-column>
         <el-table-column prop="supervising" label="上级机构" width="120">
         </el-table-column>
-        <el-table-column prop="flag" label="状态" width="120">
+        <el-table-column prop="flag" label="状态" width="100">
+          <template slot-scope="scope">
+            <div v-if="scope.row.flag == 1" style="background-color: greenyellow">已启用</div>
+            <div v-else-if="scope.row.flag == 0" style="background-color: red">已停用</div>
+            </template>
+        </el-table-column>
+        <el-table-column prop="flag" fixed="right" label="操作" width="125px">
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1">
+              <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该机构已启用, 点击停用" placement="top" :enterable="false">
-                <el-button type="warning" round size="mini" @click="changeState(scope.row)">停用</el-button>
+                <el-button @click="changeState(scope.row)" type="danger" size="mini" icon="el-icon-remove-outline"></el-button>
               </el-tooltip>
             </div>
             <div v-else-if="scope.row.flag == 0">
+              <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该机构已停用, 点击启用" placement="top" :enterable="false">
-                <el-button type="success" round size="mini" @click="changeState(scope.row)">启用</el-button>
+                <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
               </el-tooltip>
             </div>
-            </template>
-        </el-table-column>
-        <el-table-column fixed="right" label="操作" width="125px">
-          <template slot-scope="scope">
-            <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
-            <el-button @click="handleClickView(scope.row)" type="success" icon="el-icon-view" size="mini"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,6 +84,55 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
+<!--      编辑对话框-->
+      <el-dialog title="编辑" :visible.sync="dialogTableVisible">
+
+        <el-form ref="orgForm" :model="orgData" :rules="rules" label-width="100px" size="mini">
+          <el-form-item label="名称">
+            <el-input v-model="orgData.name"></el-input>
+          </el-form-item>
+          <el-form-item label="分类">
+            <el-input v-model="classifyObj[orgData.classify]" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="隶属关系">
+            <el-input v-model="relationObj[orgData.relation]" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="单位类型">
+            <el-input v-model="hostObj[orgData.host]" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="机构分类">
+            <el-input v-model="typeObj[orgData.type]" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="地址">
+            <el-input v-model="orgData.address"></el-input>
+          </el-form-item>
+          <el-form-item label="邮编">
+            <el-input v-model="orgData.postcode"></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话">
+            <el-input v-model="orgData.phone"></el-input>
+          </el-form-item>
+          <el-form-item label="机构邮箱">
+            <el-input v-model="orgData.mail"></el-input>
+          </el-form-item>
+          <el-form-item label="负责人">
+            <el-input v-model="orgData.responser"></el-input>
+          </el-form-item>
+          <el-form-item label="法人代表">
+            <el-input v-model="orgData.officer"></el-input>
+          </el-form-item>
+          <el-form-item label="机构网站">
+            <el-input v-model="orgData.web"></el-input>
+          </el-form-item>
+          <el-form-item label="上级机构">
+            <el-input v-model="orgData.supervising"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogTableVisible = false">取 消</el-button>
+          <el-button type="primary" @click="updateOrg(orgData)">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -85,7 +147,10 @@ export default {
         current: 1,
         size: 5
       },
+      loading: false,
       total: 0,
+      dialogTableVisible: false,
+      orgData: Object,
       tableData: [],
       classifyObj: {
         1: '非营利性医疗机构',
@@ -130,6 +195,12 @@ export default {
         6: '镇属',
         7: '乡属',
         8: '街道属'
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -138,34 +209,42 @@ export default {
   },
   methods: {
     getOrgByName () {
+      this.loading = true
       this.$axios.post('organization/getOrgByName', {'name': this.query}).then(result => {
         if (result.data.code === 200) {
+          this.loading = false
           // eslint-disable-next-line no-return-assign
           return this.tableData = result.data.data
         } else {
+          this.loading = false
           return this.$message.error('获取数据失败')
         }
       },
         // eslint-disable-next-line handle-callback-err
       error => {
+        this.loading = false
         return this.$message.error('获取数据失败')
       }
       )
     },
     getOrgList () {
+      this.loading = true
       this.$axios.post('organization/getOrgList', this.page).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size
           this.total = result.data.data.total
+          this.loading = false
           // eslint-disable-next-line no-return-assign
           return this.tableData = result.data.data.records
         } else {
+          this.loading = false
           return this.$message.error('获取数据失败')
         }
       },
         // eslint-disable-next-line handle-callback-err
       error => {
+        this.loading = false
         return this.$message.error('获取数据失败')
       }
       )
@@ -176,31 +255,53 @@ export default {
       else if (row.flag === 0) msg = '此操作将启用该机构, 是否继续?'
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
+          this.loading = true
           if (row.flag === 1) row.flag = 0
           else if (row.flag === 0) row.flag = 1
           await this.$axios.post('organization/cancelOrg', {'name': row.name, 'flag': row.flag}).then(result => {
+            this.loading = false
             return this.$message({ type: 'success', message: '更新机构状态成功!' })
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
+            this.loading = false
             return this.$message({ type: 'error', message: '更新机构状态失败!' })
           })
         }).catch(() => {
+          this.loading = false
           this.$message({ type: 'info', message: '已取消操作' })
         })
     },
     handleClickEdit (row) {
-      console.log(row)
+      this.dialogTableVisible = true
+      this.orgData = row
     },
-    handleClickView (row) {
-      console.log(row)
+    async updateOrg (row) {
+      this.$refs.orgForm.validate(async valid => {
+        if (!valid) {
+
+        }
+      })
+      this.dialogTableVisible = false
+      this.loading = true
+      this.$axios.post('organization/saveOrUpdate', row).then(result => {
+        if (result.data.code === 200) {
+          this.getOrgList()
+          this.loading = false
+          // eslint-disable-next-line no-return-assign
+          return this.$message.success('更新成功')
+        } else {
+          this.loading = false
+          return this.$message.error('更新失败')
+        }
+      })
     },
     handleSizeChange (newSize) {
       this.page.size = newSize
-      this.getData()
+      this.getOrgList()
     },
     handleCurrentChange (newPage) {
       this.page.current = newPage
-      this.getData()
+      this.getOrgList()
     }
   }
 }
