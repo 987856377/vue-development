@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column prop="officer" label="法人代表" width="120">
         </el-table-column>
-        <el-table-column prop="classify" label="机构分类" width="120">
+        <el-table-column prop="classify" label="机构类别" width="120">
           <template slot-scope="scope">
             {{ classifyObj[scope.row.classify] }}
           </template>
@@ -53,8 +53,8 @@
         </el-table-column>
         <el-table-column prop="flag" label="状态" width="100" sortable>
           <template slot-scope="scope">
-            <div v-if="scope.row.flag == 1" style="background-color: greenyellow">已启用</div>
-            <div v-else-if="scope.row.flag == 0" style="background-color: red">已停用</div>
+            <div v-if="scope.row.flag == 1" style="background-color: greenyellow; color: #333333; text-align: center">已启用</div>
+            <div v-else-if="scope.row.flag == 0" style="background-color: red; color: aliceblue; text-align: center">已停用</div>
             </template>
         </el-table-column>
         <el-table-column prop="flag" fixed="right" label="操作" width="125px">
@@ -85,13 +85,13 @@
         :total="total">
       </el-pagination>
 <!--      编辑对话框-->
-      <el-dialog title="编辑" :visible.sync="dialogTableVisible">
+      <el-dialog title="编辑" :visible.sync="dialogTableVisible" :show-close="false">
 
-        <el-form ref="orgForm" :model="orgData" :rules="rules" label-width="100px" size="mini">
+        <el-form ref="orgFormRef" :model="orgData" :rules="rules" label-width="100px" size="mini">
           <el-form-item label="名称" prop="name">
-            <el-input v-model="orgData.name"></el-input>
+            <el-input v-model="orgData.name" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="分类">
+          <el-form-item label="机构类别">
             <el-input v-model="classifyObj[orgData.classify]" :disabled="true"></el-input>
           </el-form-item>
           <el-form-item label="隶属关系">
@@ -129,7 +129,7 @@
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogTableVisible = false">取 消</el-button>
+          <el-button @click="handleCloseEdit">取 消</el-button>
           <el-button type="primary" @click="updateOrg(orgData)">确 定</el-button>
         </div>
       </el-dialog>
@@ -214,7 +214,8 @@ export default {
           { min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur' }
         ],
         mail: [
-          { required: true, message: '请输入机构邮箱', trigger: 'blur' }
+          { required: true, message: '请输入机构邮箱', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
         ],
         responser: [
           { required: true, message: '请输入负责人', trigger: 'blur' },
@@ -250,13 +251,11 @@ export default {
           this.loading = false
           return this.$message.error('获取数据失败')
         }
-      },
         // eslint-disable-next-line handle-callback-err
-      error => {
+      }).catch(error => {
         this.loading = false
         return this.$message.error('获取数据失败')
-      }
-      )
+      })
     },
     getOrgList () {
       this.loading = true
@@ -272,13 +271,11 @@ export default {
           this.loading = false
           return this.$message.error('获取数据失败')
         }
-      },
         // eslint-disable-next-line handle-callback-err
-      error => {
+      }).catch(error => {
         this.loading = false
         return this.$message.error('获取数据失败')
-      }
-      )
+      })
     },
     changeState (row) {
       let msg = ''
@@ -306,23 +303,34 @@ export default {
       this.dialogTableVisible = true
       this.orgData = row
     },
-    async updateOrg (row) {
-      this.$refs.orgForm.validate(async valid => {
+    handleCloseEdit () {
+      this.dialogTableVisible = false
+      this.$refs.orgFormRef.resetFields()
+    },
+    updateOrg (row) {
+      this.$refs.orgFormRef.validate(async valid => {
         if (!valid) {
           return this.$message.error('请确认信息')
         }
         this.dialogTableVisible = false
         this.loading = true
-        this.$axios.post('organization/saveOrUpdate', row).then(result => {
+        console.log(row)
+        await this.$axios.post('organization/saveOrUpdate', row).then(result => {
           if (result.data.code === 200) {
             this.getOrgList()
             this.loading = false
             // eslint-disable-next-line no-return-assign
             return this.$message.success('更新成功')
           } else {
+            this.getOrgList()
             this.loading = false
-            return this.$message.error('更新失败')
+            return this.$message.error('更新失败: ' + result.data.data)
           }
+          // eslint-disable-next-line handle-callback-err
+        }).catch(error => {
+          this.getOrgList()
+          this.loading = false
+          return this.$message.error('更新失败')
         })
       })
     },
