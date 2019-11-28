@@ -57,6 +57,7 @@ export default {
             return this.$message.error('登录失败')
           }
           window.sessionStorage.setItem('Authorization', result.headers.authorization)
+          window.sessionStorage.setItem('username', this.user.useusername)
           this.$router.push('/')
           this.loading = false
           return this.$message.success('登录成功')

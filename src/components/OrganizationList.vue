@@ -51,7 +51,7 @@
         </el-table-column>
         <el-table-column prop="supervising" label="上级机构" width="120">
         </el-table-column>
-        <el-table-column prop="flag" label="状态" width="100">
+        <el-table-column prop="flag" label="状态" width="100" sortable>
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1" style="background-color: greenyellow">已启用</div>
             <div v-else-if="scope.row.flag == 0" style="background-color: red">已停用</div>
@@ -88,7 +88,7 @@
       <el-dialog title="编辑" :visible.sync="dialogTableVisible">
 
         <el-form ref="orgForm" :model="orgData" :rules="rules" label-width="100px" size="mini">
-          <el-form-item label="名称">
+          <el-form-item label="名称" prop="name">
             <el-input v-model="orgData.name"></el-input>
           </el-form-item>
           <el-form-item label="分类">
@@ -103,28 +103,28 @@
           <el-form-item label="机构分类">
             <el-input v-model="typeObj[orgData.type]" :disabled="true"></el-input>
           </el-form-item>
-          <el-form-item label="地址">
+          <el-form-item label="地址"  prop="address">
             <el-input v-model="orgData.address"></el-input>
           </el-form-item>
-          <el-form-item label="邮编">
+          <el-form-item label="邮编" prop="postcode">
             <el-input v-model="orgData.postcode"></el-input>
           </el-form-item>
-          <el-form-item label="联系电话">
+          <el-form-item label="联系电话" prop="phone">
             <el-input v-model="orgData.phone"></el-input>
           </el-form-item>
-          <el-form-item label="机构邮箱">
+          <el-form-item label="机构邮箱" prop="mail">
             <el-input v-model="orgData.mail"></el-input>
           </el-form-item>
-          <el-form-item label="负责人">
+          <el-form-item label="负责人" prop="responser">
             <el-input v-model="orgData.responser"></el-input>
           </el-form-item>
-          <el-form-item label="法人代表">
+          <el-form-item label="法人代表" prop="officer">
             <el-input v-model="orgData.officer"></el-input>
           </el-form-item>
-          <el-form-item label="机构网站">
+          <el-form-item label="机构网站" prop="web">
             <el-input v-model="orgData.web"></el-input>
           </el-form-item>
-          <el-form-item label="上级机构">
+          <el-form-item label="上级机构" prop="supervising">
             <el-input v-model="orgData.supervising"></el-input>
           </el-form-item>
         </el-form>
@@ -198,8 +198,39 @@ export default {
       },
       rules: {
         name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { required: true, message: '请输入机构名称', trigger: 'blur' },
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
+        address: [
+          { required: true, message: '请输入机构地址', trigger: 'blur' },
+          { min: 8, max: 32, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
+        postcode: [
+          { required: true, message: '请输入邮政编码', trigger: 'blur' },
+          { min: 6, max: 6, message: '长度为 6 个字符', trigger: 'blur' }
+        ],
+        phone: [
+          { required: true, message: '请输入手机号码', trigger: 'blur' },
+          { min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur' }
+        ],
+        mail: [
+          { required: true, message: '请输入机构邮箱', trigger: 'blur' }
+        ],
+        responser: [
+          { required: true, message: '请输入负责人', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度为 3 到 16 个字符', trigger: 'blur' }
+        ],
+        officer: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度为 3 到 16 个字符', trigger: 'blur' }
+        ],
+        web: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { min: 9, max: 32, message: '长度为 9 到 32 个字符', trigger: 'blur' }
+        ],
+        supervising: [
+          { required: true, message: '请输入上级机构', trigger: 'blur' },
+          { min: 6, max: 16, message: '长度为 6 到 16 个字符', trigger: 'blur' }
         ]
       }
     }
@@ -278,21 +309,21 @@ export default {
     async updateOrg (row) {
       this.$refs.orgForm.validate(async valid => {
         if (!valid) {
-
+          return this.$message.error('请确认信息')
         }
-      })
-      this.dialogTableVisible = false
-      this.loading = true
-      this.$axios.post('organization/saveOrUpdate', row).then(result => {
-        if (result.data.code === 200) {
-          this.getOrgList()
-          this.loading = false
-          // eslint-disable-next-line no-return-assign
-          return this.$message.success('更新成功')
-        } else {
-          this.loading = false
-          return this.$message.error('更新失败')
-        }
+        this.dialogTableVisible = false
+        this.loading = true
+        this.$axios.post('organization/saveOrUpdate', row).then(result => {
+          if (result.data.code === 200) {
+            this.getOrgList()
+            this.loading = false
+            // eslint-disable-next-line no-return-assign
+            return this.$message.success('更新成功')
+          } else {
+            this.loading = false
+            return this.$message.error('更新失败')
+          }
+        })
       })
     },
     handleSizeChange (newSize) {
