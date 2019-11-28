@@ -16,10 +16,10 @@ const router = new Router({
         },
         {
           path: '/addOrg',
-          component: () => import('@/components/AddOrg')
+          component: () => import('@/components/AddOrganization')
         },
         {
-          path: '/orgs',
+          path: '/orgList',
           component: () => import('@/components/OrganizationList')
         },
         {
