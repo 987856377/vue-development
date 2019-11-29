@@ -55,6 +55,7 @@
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1" style="background-color: greenyellow; color: #333333; text-align: center">已启用</div>
             <div v-else-if="scope.row.flag == 0" style="background-color: red; color: aliceblue; text-align: center">已停用</div>
+            <div v-else-if="scope.row.flag == 9" style="background-color: yellow; color: black; text-align: center">待激活</div>
             </template>
         </el-table-column>
         <el-table-column prop="flag" fixed="right" label="操作" width="125px">
@@ -68,6 +69,12 @@
             <div v-else-if="scope.row.flag == 0">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该机构已停用, 点击启用" placement="top" :enterable="false">
+                <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
+              </el-tooltip>
+            </div>
+            <div v-else-if="scope.row.flag == 9">
+              <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
+              <el-tooltip class="item" effect="dark" content="该机构待激活, 点击激活" placement="top" :enterable="false">
                 <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
               </el-tooltip>
             </div>
@@ -85,7 +92,7 @@
         :total="total">
       </el-pagination>
 <!--      编辑对话框-->
-      <el-dialog title="编辑" :visible.sync="dialogTableVisible" :show-close="false">
+      <el-dialog title="编辑" :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
 
         <el-form ref="orgFormRef" :model="orgData" :rules="rules" label-width="100px" size="mini">
           <el-form-item label="名称" prop="name">
@@ -241,6 +248,9 @@ export default {
   },
   methods: {
     getOrgByName () {
+      if (this.query === '') {
+        return
+      }
       this.loading = true
       this.$axios.post('organization/getOrgByName', {'name': this.query}).then(result => {
         if (result.data.code === 200) {
@@ -281,11 +291,13 @@ export default {
       let msg = ''
       if (row.flag === 1) msg = '此操作将停用该机构, 是否继续?'
       else if (row.flag === 0) msg = '此操作将启用该机构, 是否继续?'
+      else if (row.flag === 9) msg = '此操作将激活该机构, 是否继续?'
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
           this.loading = true
           if (row.flag === 1) row.flag = 0
           else if (row.flag === 0) row.flag = 1
+          else if (row.flag === 9) row.flag = 1
           await this.$axios.post('organization/cancelOrg', {'name': row.name, 'flag': row.flag}).then(result => {
             this.loading = false
             return this.$message({ type: 'success', message: '更新机构状态成功!' })
@@ -312,6 +324,7 @@ export default {
         if (!valid) {
           return this.$message.error('请确认信息')
         }
+        // 点击更新按钮, 弹出的对话框隐藏, 如果添加 @click 监听函数, 关闭对话框的时候会将数据重置, 起不到更新的效果
         this.dialogTableVisible = false
         this.loading = true
         console.log(row)

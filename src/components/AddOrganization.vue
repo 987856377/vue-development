@@ -9,61 +9,77 @@
     <el-card>
       <h2>机构入驻</h2>
       <!-- 添加机构表单区域 -->
-      <el-form ref="addOrgFormRef" :model="organization" :rules="rules" :inline="true" label-width="80px" size="mini">
+      <el-form ref="addOrgFormRef" :model="organization" :rules="rules" :inline="true" label-width="90px" size="mini">
         <el-card>
-        <el-form-item label="机构名称" prop="name">
-          <el-input v-model="organization.name"></el-input>
-        </el-form-item>
-        <el-form-item label="类别" prop="classify">
-          <el-select v-model="organization.classify">
-            <el-option v-for="item in classifyObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-select v-model="organization.type">
-            <el-option v-for="item in typeObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="单位" prop="host">
-          <el-select v-model="organization.host">
-            <el-option v-for="item in hostObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="隶属关系" prop="relation">
-          <el-select v-model="organization.relation">
-            <el-option v-for="item in relationObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="邮政编码" prop="postcode">
-          <el-input v-model="organization.postcode"></el-input>
-        </el-form-item>
-        <el-form-item label="地址" prop="address">
-          <el-input v-model="organization.address"></el-input>
-        </el-form-item>
-        <el-form-item label="手机" prop="phone">
-          <el-input v-model="organization.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="mail">
-          <el-input v-model="organization.mail"></el-input>
-        </el-form-item>
-        <el-form-item label="负责人" prop="responser">
-          <el-input v-model="organization.responser"></el-input>
-        </el-form-item>
-        <el-form-item label="法人" prop="officer">
-          <el-input v-model="organization.officer"></el-input>
-        </el-form-item>
-        <el-form-item label="机构网站" prop="web">
-          <el-input v-model="organization.web"></el-input>
-        </el-form-item>
-        <el-form-item label="上级机构" prop="supervising">
-          <el-input v-model="organization.supervising"></el-input>
-        </el-form-item>
-        <el-form-item label="是否启用" prop="flag">
-          <el-input v-model="organization.flag"></el-input>
-        </el-form-item>
+          <el-row :gutter="20">
+            <el-col :span="11">
+              <el-form-item label="机构代码" prop="code">
+                <el-input v-model="organization.code"></el-input>
+              </el-form-item>
+              <el-form-item label="机构名称" prop="name">
+                <el-input v-model="organization.name"></el-input>
+              </el-form-item>
+              <el-form-item label="手机" prop="phone">
+                <el-input v-model="organization.phone"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱" prop="mail">
+                <el-input v-model="organization.mail"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="机构类型" prop="type">
+                <el-select v-model="organization.type">
+                  <el-option v-for="item in typeObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="主办单位" prop="host">
+                <el-select v-model="organization.host">
+                  <el-option v-for="item in hostObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="隶属关系" prop="relation">
+                <el-select v-model="organization.relation">
+                  <el-option v-for="item in relationObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="机构分类" prop="classify">
+                <el-select v-model="organization.classify">
+                  <el-option v-for="item in classifyObj" :label="item.key" :key="item.value" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="邮政编码" prop="postcode">
+                <el-input v-model="organization.postcode"></el-input>
+              </el-form-item>
+              <el-form-item label="负责人" prop="responser">
+                <el-input v-model="organization.responser"></el-input>
+              </el-form-item>
+              <el-form-item label="法人" prop="officer">
+                <el-input v-model="organization.officer"></el-input>
+              </el-form-item>
+              <el-form-item label="上级机构" prop="supervising">
+                <el-input v-model="organization.supervising"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="11">
+              <el-form-item label="机构网站" prop="web">
+                <el-input v-model="organization.web">
+                  <template slot="prepend">Http://</template>
+                </el-input>
+              </el-form-item>
+              <el-form-item label="地址" prop="address">
+                <el-input v-model="organization.address" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" style="width: 400px"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-form-item label="是否启用" prop="flag">
+              <el-switch v-model="organization.flag" active-color="#13ce66" active-value="1" inactive-value="9"></el-switch>
+            </el-form-item>
+          </el-row>
         </el-card>
-        <!-- 按钮 -->
-        <el-form-item style="margin-top: 25px">
+        <el-form-item style="margin-top: 15px">
           <el-button type="primary" @click='save' v-loading.fullscreen.lock="loading">入驻</el-button>
           <el-button type="info" @click='reset'>重置</el-button>
         </el-form-item>
@@ -91,7 +107,7 @@ export default {
         officer: '',
         web: '',
         supervising: '',
-        flag: 0
+        flag: 9
       },
       loading: false,
       classifyObj: [
@@ -251,6 +267,10 @@ export default {
           { required: true, message: '请输入机构名称', trigger: 'blur' },
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
+        code: [
+          { required: true, message: '请输入机构代码', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
         classify: [
           { required: true, message: '请选择机构类别', trigger: 'blur' }
         ],
@@ -292,7 +312,7 @@ export default {
           { min: 9, max: 32, message: '长度为 9 到 32 个字符', trigger: 'blur' }
         ],
         supervising: [
-          { required: true, message: '请输入上级机构', trigger: 'blur' },
+          { required: true, message: '请输入上级机构, 没有上级机构填写机构名称', trigger: 'blur' },
           { min: 6, max: 16, message: '长度为 6 到 16 个字符', trigger: 'blur' }
         ]
       }
@@ -305,20 +325,19 @@ export default {
           return
         }
         this.loading = true
-        console.log(this.organization)
-        // await this.$axios.post('organization/saveOrUpdate', this.organization).then(result => {
-        //   if (result.data.code === 409) {
-        //     this.loading = false
-        //     return this.$message.error('机构入驻失败')
-        //   }
-        //   this.loading = false
-        //   this.$router.push('/orgList')
-        //   return this.$message.success('机构入驻成功')
-        //   // eslint-disable-next-line handle-callback-err
-        // }).catch(error => {
-        //   this.loading = false
-        //   return this.$message.error('机构入驻失败')
-        // })
+        await this.$axios.post('organization/saveOrUpdate', this.organization).then(result => {
+          if (result.data.code !== 200) {
+            this.loading = false
+            return this.$message.error('机构入驻失败: ' + result.data.data)
+          }
+          this.loading = false
+          this.$router.push('/orgList')
+          return this.$message.success('机构入驻成功')
+          // eslint-disable-next-line handle-callback-err
+        }).catch(error => {
+          this.loading = false
+          return this.$message.error('机构入驻失败: ' + error)
+        })
       })
     },
     reset () {
