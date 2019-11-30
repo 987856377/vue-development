@@ -1,87 +1,73 @@
 <template>
   <div>
-<!--    面包屑导航-->
+    <!--    面包屑导航-->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>机构管理</el-breadcrumb-item>
-      <el-breadcrumb-item>机构列表</el-breadcrumb-item>
+      <el-breadcrumb-item>用户维护</el-breadcrumb-item>
+      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
-<!--    卡片视图-->
+    <!--    卡片视图-->
     <el-card>
-<!--      搜索与添加-->
+      <!--      搜索与添加-->
       <el-row>
         <el-col :span="7">
-          <el-input placeholder="请输入机构名称" v-model="query" clearable @clear="getOrgList">
-            <el-button slot="append" icon="el-icon-search" @click="getOrgByName"></el-button>
+          <el-input placeholder="请输入用户名进行查询" v-model="query" clearable @clear="getUserInfoList">
+            <el-button slot="append" icon="el-icon-search" @click="getUserInfo"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4"></el-col>
       </el-row>
-<!--      表单-->
+      <!--      表单-->
       <el-table :data="tableData" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading">
-        <el-table-column fixed prop="date" label="注册日期" sortable width="140">
+        <el-table-column fixed prop="username" label="用户名" width="120">
         </el-table-column>
-        <el-table-column prop="name" label="机构名称" width="120">
+        <el-table-column fixed prop="name" label="姓名" width="120">
         </el-table-column>
-        <el-table-column prop="address" label="地址" width="120">
+        <el-table-column prop="sex" label="性别" width="80">
         </el-table-column>
-        <el-table-column prop="postcode" label="邮编" width="120">
+        <el-table-column prop="age" label="年龄" width="80" sortable>
         </el-table-column>
-        <el-table-column prop="phone" label="联系电话" width="120">
+        <el-table-column prop="nation" label="民族" width="100">
         </el-table-column>
-        <el-table-column prop="mail" label="机构邮箱" width="120">
+        <el-table-column prop="phone" label="手机" width="120">
         </el-table-column>
-        <el-table-column prop="officer" label="法人代表" width="120">
+        <el-table-column prop="mail" label="邮箱" width="140">
         </el-table-column>
-        <el-table-column prop="classify" label="机构类别" width="120">
-          <template slot-scope="scope">
-            {{ classifyObj[scope.row.classify] }}
-          </template>
+        <el-table-column prop="identity" label="身份证号" width="150">
         </el-table-column>
-        <el-table-column prop="relation" label="隶属关系" width="140">
-          <template slot-scope="scope">
-            {{ relationObj[scope.row.relation] }}
-          </template>
+        <el-table-column prop="orgname" label="所属机构" width="120" sortable>
         </el-table-column>
-        <el-table-column prop="host" label="单位类型" width="120">
-          <template slot-scope="scope">
-            {{ hostObj[scope.row.host] }}
-          </template>
+        <el-table-column prop="registerTime" label="注册日期" sortable width="140">
         </el-table-column>
-        <el-table-column prop="supervising" label="上级机构" width="120">
+        <el-table-column prop="modifyTime" label="修改日期" sortable width="140">
+        </el-table-column>
+        <el-table-column prop="lastLoginTime" label="最后登录日期" sortable width="140">
         </el-table-column>
         <el-table-column prop="flag" label="状态" width="100" sortable>
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1" style="background-color: greenyellow; color: #333333; text-align: center">已启用</div>
             <div v-else-if="scope.row.flag == 0" style="background-color: red; color: aliceblue; text-align: center">已停用</div>
-            <div v-else-if="scope.row.flag == 9" style="background-color: yellow; color: black; text-align: center">待激活</div>
-            </template>
+          </template>
         </el-table-column>
         <el-table-column prop="flag" fixed="right" label="操作" width="125px">
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
-              <el-tooltip class="item" effect="dark" content="该机构已启用, 点击停用" placement="top" :enterable="false">
+              <el-tooltip class="item" effect="dark" content="该用户已启用, 点击停用" placement="top" :enterable="false">
                 <el-button @click="changeState(scope.row)" type="danger" size="mini" icon="el-icon-remove-outline"></el-button>
               </el-tooltip>
             </div>
             <div v-else-if="scope.row.flag == 0">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
-              <el-tooltip class="item" effect="dark" content="该机构已停用, 点击启用" placement="top" :enterable="false">
-                <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
-              </el-tooltip>
-            </div>
-            <div v-else-if="scope.row.flag == 9">
-              <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
-              <el-tooltip class="item" effect="dark" content="该机构待激活, 点击激活" placement="top" :enterable="false">
+              <el-tooltip class="item" effect="dark" content="该用户已停用, 点击启用" placement="top" :enterable="false">
                 <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
               </el-tooltip>
             </div>
           </template>
         </el-table-column>
       </el-table>
-<!--      分页-->
+      <!--      分页-->
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
@@ -91,53 +77,45 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
-<!--      编辑对话框-->
+      <!--      编辑对话框-->
       <el-dialog title="编辑" :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
 
-        <el-form ref="orgFormRef" :model="orgData" :rules="rules" label-width="100px" size="mini">
-          <el-form-item label="名称" prop="name">
-            <el-input v-model="orgData.name" :disabled="true"></el-input>
+        <el-form ref="usrFormRef" :model="usrData" :rules="rules" label-width="100px" size="mini">
+          <el-form-item label="用户名" prop="username">
+            <el-input v-model="usrData.username" disabled></el-input>
           </el-form-item>
-          <el-form-item label="机构类别">
-            <el-input v-model="classifyObj[orgData.classify]" :disabled="true"></el-input>
+          <el-form-item label="姓名" prop="name">
+            <el-input v-model="usrData.name"></el-input>
           </el-form-item>
-          <el-form-item label="隶属关系">
-            <el-input v-model="relationObj[orgData.relation]" :disabled="true"></el-input>
+          <el-form-item label="性别"  prop="sex">
+            <el-select v-model="usrData.sex" style="width: 415px">
+              <el-option value="男" key="男"></el-option>
+              <el-option value="女" key="女"></el-option>
+              <el-option value="不详" key="不详"></el-option>
+            </el-select>
           </el-form-item>
-          <el-form-item label="单位类型">
-            <el-input v-model="hostObj[orgData.host]" :disabled="true"></el-input>
+          <el-form-item label="年龄" prop="age">
+            <el-input v-model="usrData.age"></el-input>
           </el-form-item>
-          <el-form-item label="机构分类">
-            <el-input v-model="typeObj[orgData.type]" :disabled="true"></el-input>
+          <el-form-item label="民族" prop="nation">
+            <el-input v-model="usrData.nation"></el-input>
           </el-form-item>
-          <el-form-item label="地址"  prop="address">
-            <el-input v-model="orgData.address"></el-input>
+          <el-form-item label="手机" prop="phone">
+            <el-input v-model="usrData.phone"></el-input>
           </el-form-item>
-          <el-form-item label="邮编" prop="postcode">
-            <el-input v-model="orgData.postcode"></el-input>
+          <el-form-item label="邮箱" prop="mail">
+            <el-input v-model="usrData.mail"></el-input>
           </el-form-item>
-          <el-form-item label="联系电话" prop="phone">
-            <el-input v-model="orgData.phone"></el-input>
+          <el-form-item label="身份证" prop="identity">
+            <el-input v-model="usrData.identity"></el-input>
           </el-form-item>
-          <el-form-item label="机构邮箱" prop="mail">
-            <el-input v-model="orgData.mail"></el-input>
-          </el-form-item>
-          <el-form-item label="负责人" prop="responser">
-            <el-input v-model="orgData.responser"></el-input>
-          </el-form-item>
-          <el-form-item label="法人代表" prop="officer">
-            <el-input v-model="orgData.officer"></el-input>
-          </el-form-item>
-          <el-form-item label="机构网站" prop="web">
-            <el-input v-model="orgData.web"></el-input>
-          </el-form-item>
-          <el-form-item label="上级机构" prop="supervising">
-            <el-input v-model="orgData.supervising"></el-input>
+          <el-form-item label="所属机构" prop="orgname">
+            <el-input v-model="usrData.orgname" disabled></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCloseEdit">取 消</el-button>
-          <el-button type="primary" @click="updateOrg(orgData)">确 定</el-button>
+          <el-button type="primary" @click="updateUser(usrData)">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -157,59 +135,19 @@ export default {
       loading: false,
       total: 0,
       dialogTableVisible: false,
-      orgData: Object,
+      usrData: Object,
       tableData: [],
-      classifyObj: {
-        1: '非营利性医疗机构',
-        2: '盈利性医疗机构',
-        3: '其他医疗机构'
-      },
-      typeObj: {
-        1: '省卫生厅',
-        2: '市卫生局',
-        3: '区卫生局',
-        4: '卫生社会团体',
-        5: '其他卫生机构',
-        6: '健康教育所(站、中心)',
-        7: '医学教育机构',
-        8: '医学科学研究机构',
-        9: '卫生监督检验(监测、检测)所(站)',
-        10: '卫生监督所(局)',
-        11: '疾病防控制中心(防疫站)',
-        12: '专科疾病防治院(所、站)',
-        13: '医院',
-        14: '采供血机构',
-        15: '急救中心(站)',
-        16: '妇幼保健院(所、站)',
-        17: '门诊部、诊所、医务室、村卫生室',
-        18: '卫生院',
-        19: '社区卫生服务中心(站)'
-      },
-      hostObj: {
-        1: '卫生行政部门',
-        2: '其他行政部门',
-        3: '企业',
-        4: '事业单位',
-        5: '社会团体',
-        6: '其他社会组织'
-      },
-      relationObj: {
-        1: '中央属',
-        2: '省,自治区直辖市属',
-        3: '省辖市(地区,州,盟)',
-        4: '县级市(省辖市区)属',
-        5: '县(旗)属',
-        6: '镇属',
-        7: '乡属',
-        8: '街道属'
-      },
       rules: {
+        username: [
+          { required: true, message: '请输入用户名称', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
         name: [
-          { required: true, message: '请输入机构名称', trigger: 'blur' },
+          { required: true, message: '请输入用户名称', trigger: 'blur' },
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         address: [
-          { required: true, message: '请输入机构地址', trigger: 'blur' },
+          { required: true, message: '请输入用户地址', trigger: 'blur' },
           { min: 8, max: 32, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ],
         postcode: [
@@ -221,7 +159,7 @@ export default {
           { min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur' }
         ],
         mail: [
-          { required: true, message: '请输入机构邮箱', trigger: 'blur' },
+          { required: true, message: '请输入用户邮箱', trigger: 'blur' },
           { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
         ],
         responser: [
@@ -237,26 +175,26 @@ export default {
           { min: 9, max: 32, message: '长度为 9 到 32 个字符', trigger: 'blur' }
         ],
         supervising: [
-          { required: true, message: '请输入上级机构', trigger: 'blur' },
+          { required: true, message: '请输入上级用户', trigger: 'blur' },
           { min: 6, max: 16, message: '长度为 6 到 16 个字符', trigger: 'blur' }
         ]
       }
     }
   },
   created () {
-    this.getOrgList()
+    this.getUserInfoList()
   },
   methods: {
-    getOrgByName () {
+    getUserInfo () {
       if (this.query === '') {
         return
       }
       this.loading = true
-      this.$axios.post('organization/getOrgByName', {'name': this.query}).then(result => {
+      this.$axios.post('userinfo/getUserInfo', {'username': this.query}).then(result => {
         if (result.data.code === 200) {
           this.loading = false
           // eslint-disable-next-line no-return-assign
-          return this.tableData = result.data.data
+          return this.tableData = new Array(result.data.data)
         } else {
           this.loading = false
           return this.$message.error('获取数据失败')
@@ -267,9 +205,9 @@ export default {
         return this.$message.error('获取数据失败')
       })
     },
-    getOrgList () {
+    getUserInfoList () {
       this.loading = true
-      this.$axios.post('organization/getOrgList', this.page).then(result => {
+      this.$axios.post('userinfo/getUserInfoPage', this.page).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size
@@ -289,22 +227,20 @@ export default {
     },
     changeState (row) {
       let msg = ''
-      if (row.flag === 1) msg = '此操作将停用该机构, 是否继续?'
-      else if (row.flag === 0) msg = '此操作将启用该机构, 是否继续?'
-      else if (row.flag === 9) msg = '此操作将激活该机构, 是否继续?'
+      if (row.flag === 1) msg = '此操作将停用该用户, 是否继续?'
+      else if (row.flag === 0) msg = '此操作将启用该用户, 是否继续?'
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
           this.loading = true
           if (row.flag === 1) row.flag = 0
           else if (row.flag === 0) row.flag = 1
-          else if (row.flag === 9) row.flag = 1
-          await this.$axios.post('organization/cancelOrg', {'name': row.name, 'flag': row.flag}).then(result => {
+          await this.$axios.post('user/cancelUserById', {'id': row.id, 'flag': row.flag}).then(result => {
             this.loading = false
-            return this.$message({ type: 'success', message: '更新机构状态成功!' })
+            return this.$message({ type: 'success', message: '更新用户状态成功!' })
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
-            return this.$message({ type: 'error', message: '更新机构状态失败!' })
+            return this.$message({ type: 'error', message: '更新用户状态失败!' })
           })
         }).catch(() => {
           this.loading = false
@@ -313,34 +249,34 @@ export default {
     },
     handleClickEdit (row) {
       this.dialogTableVisible = true
-      this.orgData = row
+      this.usrData = row
     },
     handleCloseEdit () {
       this.dialogTableVisible = false
-      this.$refs.orgFormRef.resetFields()
+      this.$refs.usrFormRef.resetFields()
     },
-    updateOrg (row) {
-      this.$refs.orgFormRef.validate(async valid => {
+    updateUser (row) {
+      this.$refs.usrFormRef.validate(async valid => {
         if (!valid) {
           return this.$message.error('请确认信息')
         }
         // 点击更新按钮, 弹出的对话框隐藏, 如果添加 @click 监听函数, 关闭对话框的时候会将数据重置, 起不到更新的效果
         this.dialogTableVisible = false
         this.loading = true
-        await this.$axios.post('organization/saveOrUpdate', row).then(result => {
+        await this.$axios.post('userinfo/completeUserInfo', row).then(result => {
           if (result.data.code === 200) {
-            this.getOrgList()
+            this.getUserInfoList()
             this.loading = false
             // eslint-disable-next-line no-return-assign
             return this.$message.success('更新成功')
           } else {
-            this.getOrgList()
+            this.getUserInfoList()
             this.loading = false
             return this.$message.error('更新失败: ' + result.data.data)
           }
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
-          this.getOrgList()
+          this.getUserInfoList()
           this.loading = false
           return this.$message.error('更新失败')
         })
@@ -348,11 +284,11 @@ export default {
     },
     handleSizeChange (newSize) {
       this.page.size = newSize
-      this.getOrgList()
+      this.getUserInfoList()
     },
     handleCurrentChange (newPage) {
       this.page.current = newPage
-      this.getOrgList()
+      this.getUserInfoList()
     }
   }
 }

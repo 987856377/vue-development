@@ -51,14 +51,21 @@ export default {
           return
         }
         this.loading = true
-        await this.$axios.post('login', this.$qs.stringify(this.user)).then(result => {
+        await this.$axios.post('login', this.$qs.stringify(this.user)).then(async result => {
           if (result.data.code === 409) {
             this.loading = false
             return this.$message.error('登录失败: ' + result.data.message)
           }
           window.sessionStorage.setItem('Authorization', result.headers.authorization)
           window.sessionStorage.setItem('username', this.user.username)
-          this.$router.push('/')
+          await this.$axios.post('user/getIdByUsername', {'username': this.user.username}).then(async result1 => {
+            if (result1.data.code !== 200) {
+              this.loading = false
+              return this.$message.error('登录失败')
+            }
+            window.sessionStorage.setItem('id', result1.data.data)
+          })
+          await this.$router.push('/')
           this.loading = false
           return this.$message.success('登录成功')
           // eslint-disable-next-line handle-callback-err

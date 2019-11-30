@@ -27,8 +27,8 @@
               <span slot="title">人员维护</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="2-1">添加用户</el-menu-item>
-              <el-menu-item index="2-2">用户列表</el-menu-item>
+              <el-menu-item index="/addUser">添加用户</el-menu-item>
+              <el-menu-item index="/userList">用户列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
@@ -80,8 +80,8 @@
               <span slot="title">个人设置</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/config">完善资料</el-menu-item>
-              <el-menu-item index="7-2">修改密码</el-menu-item>
+              <el-menu-item index="/complateUserInfo">完善资料</el-menu-item>
+              <el-menu-item index="/resetPassword">修改密码</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
         </el-menu>

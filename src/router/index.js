@@ -23,6 +23,22 @@ const router = new Router({
           component: () => import('@/components/OrganizationList')
         },
         {
+          path: '/addUser',
+          component: () => import('@/components/AddUser')
+        },
+        {
+          path: '/userList',
+          component: () => import('@/components/UserList')
+        },
+        {
+          path: '/complateUserInfo',
+          component: () => import('@/components/ComplateUserInfo')
+        },
+        {
+          path: '/resetPassword',
+          component: () => import('@/components/ResetPassword')
+        },
+        {
           path: '/config',
           component: () => import('@/components/Config')
         }

@@ -7,11 +7,13 @@
 <script>
 import Login from '@/components/Login'
 import Index from '@/components/Index'
+import Application from '@/components/Application'
 export default {
   name: 'app',
   components: {
     Login,
-    Index
+    Index,
+    Application
   }
 }
 </script>
