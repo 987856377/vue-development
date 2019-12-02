@@ -225,6 +225,8 @@ export default {
   created () {
     this.getUserOrg()
     this.getUserInfoList()
+  },
+  mounted () {
     this.getRoleListAvalible()
   },
   methods: {
@@ -277,7 +279,7 @@ export default {
         return this.$message.error('获取数据失败')
       })
     },
-    async getRoleList () {
+    async getUserRoleList () {
       this.waiting = true
       await this.$axios.post('userrole/getRoleList', this.role).then(result => {
         if (result.data.code === 200) {
@@ -331,7 +333,7 @@ export default {
     async handleClickView (row) {
       this.roleTableVisible = true
       this.role.uid = row.id
-      this.getRoleList()
+      this.getUserRoleList()
     },
     handleCloseRoleDialog () {
       this.roleTableVisible = false
@@ -346,7 +348,7 @@ export default {
       this.waiting = true
       await this.$axios.post('userrole/addUserRole', this.role).then(result => {
         if (result.data.code === 200) {
-          this.getRoleList()
+          this.getUserRoleList()
         }
         this.role.destRole = ''
         this.waiting = false
@@ -365,7 +367,7 @@ export default {
       this.waiting = true
       await this.$axios.post('userrole/delUserRole', this.role).then(result => {
         if (result.data.code === 200) {
-          this.getRoleList()
+          this.getUserRoleList()
         }
         this.role.destRole = ''
         this.waiting = false
