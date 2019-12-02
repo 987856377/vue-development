@@ -16,27 +16,27 @@ const router = new Router({
         },
         {
           path: '/addOrg',
-          component: () => import('@/components/AddOrganization')
+          component: () => import('@/components/organization/AddOrganization')
         },
         {
           path: '/orgList',
-          component: () => import('@/components/OrganizationList')
+          component: () => import('@/components/organization/OrganizationList')
         },
         {
           path: '/addUser',
-          component: () => import('@/components/AddUser')
+          component: () => import('@/components/user/AddUser')
         },
         {
           path: '/userList',
-          component: () => import('@/components/UserList')
+          component: () => import('@/components/user/UserList')
         },
         {
           path: '/complateUserInfo',
-          component: () => import('@/components/ComplateUserInfo')
+          component: () => import('@/components/user/ComplateUserInfo')
         },
         {
           path: '/resetPassword',
-          component: () => import('@/components/ResetPassword')
+          component: () => import('@/components/user/ResetPassword')
         },
         {
           path: '/config',

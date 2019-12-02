@@ -20,45 +20,45 @@
 <!--      表单-->
       <el-table :data="tableData" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading">
-        <el-table-column fixed prop="date" label="注册日期" sortable width="140">
+        <el-table-column fixed prop="date" label="注册日期" sortable width="140" align="center">
         </el-table-column>
-        <el-table-column prop="name" label="机构名称" width="120">
+        <el-table-column prop="name" label="机构名称" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="address" label="地址" width="120">
+        <el-table-column prop="address" label="地址" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="postcode" label="邮编" width="120">
+        <el-table-column prop="postcode" label="邮编" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="phone" label="联系电话" width="120">
+        <el-table-column prop="phone" label="联系电话" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="mail" label="机构邮箱" width="120">
+        <el-table-column prop="mail" label="机构邮箱" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="officer" label="法人代表" width="120">
+        <el-table-column prop="officer" label="法人代表" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="classify" label="机构类别" width="120">
+        <el-table-column prop="classify" label="机构类别" width="120" align="center">
           <template slot-scope="scope">
             {{ classifyObj[scope.row.classify] }}
           </template>
         </el-table-column>
-        <el-table-column prop="relation" label="隶属关系" width="140">
+        <el-table-column prop="relation" label="隶属关系" width="140" align="center">
           <template slot-scope="scope">
             {{ relationObj[scope.row.relation] }}
           </template>
         </el-table-column>
-        <el-table-column prop="host" label="单位类型" width="120">
+        <el-table-column prop="host" label="单位类型" width="120" align="center">
           <template slot-scope="scope">
             {{ hostObj[scope.row.host] }}
           </template>
         </el-table-column>
-        <el-table-column prop="supervising" label="上级机构" width="120">
+        <el-table-column prop="supervising" label="上级机构" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="flag" label="状态" width="100" sortable>
+        <el-table-column prop="flag" label="状态" width="100" sortable align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1" style="background-color: greenyellow; color: #333333; text-align: center">已启用</div>
             <div v-else-if="scope.row.flag == 0" style="background-color: red; color: aliceblue; text-align: center">已停用</div>
             <div v-else-if="scope.row.flag == 9" style="background-color: yellow; color: black; text-align: center">待激活</div>
             </template>
         </el-table-column>
-        <el-table-column prop="flag" fixed="right" label="操作" width="125px">
+        <el-table-column prop="flag" fixed="right" label="操作" width="125px" align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>

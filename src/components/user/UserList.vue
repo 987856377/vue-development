@@ -20,37 +20,37 @@
       <!--      表单-->
       <el-table :data="tableData" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading">
-        <el-table-column fixed prop="username" label="用户名" width="120">
+        <el-table-column fixed prop="username" label="用户名" width="120" align="center">
         </el-table-column>
-        <el-table-column fixed prop="name" label="姓名" width="120">
+        <el-table-column fixed prop="name" label="姓名" width="120" align="center" >
         </el-table-column>
-        <el-table-column prop="sex" label="性别" width="80">
+        <el-table-column prop="sex" label="性别" width="80" align="center" >
         </el-table-column>
-        <el-table-column prop="age" label="年龄" width="80" sortable>
+        <el-table-column prop="age" label="年龄" width="80" sortable align="center" >
         </el-table-column>
-        <el-table-column prop="nation" label="民族" width="100">
+        <el-table-column prop="nation" label="民族" width="100" align="center">
         </el-table-column>
-        <el-table-column prop="phone" label="手机" width="120">
+        <el-table-column prop="phone" label="手机" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="mail" label="邮箱" width="140">
+        <el-table-column prop="mail" label="邮箱" width="140" align="center">
         </el-table-column>
-        <el-table-column prop="identity" label="身份证号" width="150">
+        <el-table-column prop="identity" label="身份证号" width="150" align="center">
         </el-table-column>
-        <el-table-column prop="orgname" label="所属机构" width="120" sortable>
+        <el-table-column prop="orgname" label="所属机构" width="120" sortable align="center">
         </el-table-column>
-        <el-table-column prop="registerTime" label="注册日期" sortable width="140">
+        <el-table-column prop="registerTime" label="注册日期" sortable width="140" align="center">
         </el-table-column>
-        <el-table-column prop="modifyTime" label="修改日期" sortable width="140">
+        <el-table-column prop="modifyTime" label="修改日期" sortable width="140" align="center">
         </el-table-column>
-        <el-table-column prop="lastLoginTime" label="最后登录日期" sortable width="140">
+        <el-table-column prop="lastLoginTime" label="最后登录日期" sortable width="140" align="center">
         </el-table-column>
-        <el-table-column prop="flag" label="状态" width="100" sortable>
+        <el-table-column prop="flag" label="状态" width="100" sortable  align="center" >
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1" style="background-color: greenyellow; color: #333333; text-align: center">已启用</div>
             <div v-else-if="scope.row.flag == 0" style="background-color: red; color: aliceblue; text-align: center">已停用</div>
           </template>
         </el-table-column>
-        <el-table-column prop="flag" fixed="right" label="操作" width="185px">
+        <el-table-column prop="flag" fixed="right" label="操作" align="center" width="185px">
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
@@ -120,6 +120,31 @@
           <el-button type="primary" @click="handleClickUpdate(usrData)">确 定</el-button>
         </div>
       </el-dialog>
+<!--      角色对话框-->
+      <el-dialog title="用户角色" :visible.sync="roleTableVisible" center :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <template>
+          <el-select v-model="role.destRole" placeholder="请选择">
+            <el-option v-for="item in roleList" :key="item.code" :value="item.code" :label="item.title">
+            </el-option>
+          </el-select>
+          <el-button @click="handleClickAddRole" type="success" icon="el-icon-plus" style="margin-right: 15px">添加角色</el-button>
+        </template>
+        <el-table :data="roleData" style="width: 100%" max-height="520" stripe border v-loading.lock="waiting" element-loading-text="拼命加载中"
+                  element-loading-spinner="el-icon-loading">
+          <el-table-column label="角色ID" prop="id" align="center">
+          </el-table-column>
+          <el-table-column label="角色标识" prop="title" align="center">
+          </el-table-column>
+          <el-table-column label="操作" width="140" align="center">
+            <template slot-scope="scope">
+              <el-button @click="handleClickDelRole(scope.row)" type="danger" icon="el-icon-delete" size="mini"></el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="handleCloseRoleDialog">关 闭</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -134,12 +159,23 @@ export default {
         current: 1,
         size: 5
       },
-      orgName: '',
-      orgCode: '',
-      orgFlag: '',
+      role: {
+        uid: '',
+        destRole: '',
+        sourceRole: ''
+      },
+      roleData: [],
+      roleList: [],
+      org: {
+        orgName: '',
+        orgCode: '',
+        orgFlag: ''
+      },
       loading: false,
+      waiting: false,
       total: 0,
       dialogTableVisible: false,
+      roleTableVisible: false,
       usrData: Object,
       tableData: [],
       rules: {
@@ -189,14 +225,15 @@ export default {
   created () {
     this.getUserOrg()
     this.getUserInfoList()
+    this.getRoleListAvalible()
   },
   methods: {
     async getUserOrg () {
       await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
         if (result.data.code === 200) {
-          this.orgName = result.data.data.name
-          this.orgCode = result.data.data.code
-          this.orgFlag = result.data.data.orgflag
+          this.org.orgName = result.data.data.name
+          this.org.orgCode = result.data.data.code
+          this.org.orgFlag = result.data.data.orgflag
         }
       })
     },
@@ -222,7 +259,7 @@ export default {
     },
     getUserInfoList () {
       this.loading = true
-      this.$axios.post('userinfo/getUserInfoPage', { page: this.page, 'orgflag': this.orgFlag }).then(result => {
+      this.$axios.post('userinfo/getUserInfoPage', { page: this.page, 'orgflag': this.org.orgFlag }).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size
@@ -238,6 +275,31 @@ export default {
       }).catch(error => {
         this.loading = false
         return this.$message.error('获取数据失败')
+      })
+    },
+    async getRoleList () {
+      this.waiting = true
+      await this.$axios.post('userrole/getRoleList', this.role).then(result => {
+        if (result.data.code === 200) {
+          this.roleData = result.data.data
+        }
+        this.waiting = false
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.waiting = false
+        return this.$message.error('获取用户角色数据失败')
+      })
+    },
+    async getRoleListAvalible () {
+      await this.$axios.post('userrole/getRoleListAvalible', {'uid': window.sessionStorage.getItem('id')}).then(result => {
+        if (result.data.code === 200) {
+          this.roleList = result.data.data
+        }
+        this.waiting = false
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.waiting = false
+        return this.$message.error('获取用户可操作角色数据失败')
       })
     },
     handleClickChange (row) {
@@ -266,9 +328,53 @@ export default {
       this.dialogTableVisible = true
       this.usrData = row
     },
-    handleClickView (row) {
-      this.dialogTableVisible = true
-      this.usrData = row
+    async handleClickView (row) {
+      this.roleTableVisible = true
+      this.role.uid = row.id
+      this.getRoleList()
+    },
+    handleCloseRoleDialog () {
+      this.roleTableVisible = false
+      this.role.uid = ''
+      this.role.sourceRole = ''
+      this.role.destRole = ''
+    },
+    async handleClickAddRole () {
+      if (this.role.uid === null || this.role.uid === '' || this.role.destRole === null || this.role.destRole === '') {
+        return
+      }
+      this.waiting = true
+      await this.$axios.post('userrole/addUserRole', this.role).then(result => {
+        if (result.data.code === 200) {
+          this.getRoleList()
+        }
+        this.role.destRole = ''
+        this.waiting = false
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.role.destRole = ''
+        this.waiting = false
+        return this.$message.error('添加用户角色失败')
+      })
+    },
+    async handleClickDelRole (row) {
+      this.role.destRole = row.code
+      if (this.role.uid === null || this.role.uid === '' || this.role.destRole === null || this.role.destRole === '') {
+        return
+      }
+      this.waiting = true
+      await this.$axios.post('userrole/delUserRole', this.role).then(result => {
+        if (result.data.code === 200) {
+          this.getRoleList()
+        }
+        this.role.destRole = ''
+        this.waiting = false
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.role.destRole = ''
+        this.waiting = false
+        return this.$message.error('删除用户角色失败')
+      })
     },
     handleCloseEdit () {
       this.dialogTableVisible = false
