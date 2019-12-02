@@ -132,6 +132,9 @@ export default {
         current: 1,
         size: 5
       },
+      orgName: '',
+      orgCode: '',
+      orgFlag: '',
       loading: false,
       total: 0,
       dialogTableVisible: false,
@@ -182,9 +185,19 @@ export default {
     }
   },
   created () {
+    this.getUserOrg()
     this.getUserInfoList()
   },
   methods: {
+    async getUserOrg () {
+      await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
+        if (result.data.code === 200) {
+          this.orgName = result.data.data.name
+          this.orgCode = result.data.data.code
+          this.orgFlag = result.data.data.orgflag
+        }
+      })
+    },
     getUserInfo () {
       if (this.query === '') {
         return
@@ -207,7 +220,7 @@ export default {
     },
     getUserInfoList () {
       this.loading = true
-      this.$axios.post('userinfo/getUserInfoPage', this.page).then(result => {
+      this.$axios.post('userinfo/getUserInfoPage', { page: this.page, 'orgflag': this.orgFlag }).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size
