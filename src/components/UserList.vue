@@ -50,19 +50,21 @@
             <div v-else-if="scope.row.flag == 0" style="background-color: red; color: aliceblue; text-align: center">已停用</div>
           </template>
         </el-table-column>
-        <el-table-column prop="flag" fixed="right" label="操作" width="125px">
+        <el-table-column prop="flag" fixed="right" label="操作" width="185px">
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该用户已启用, 点击停用" placement="top" :enterable="false">
-                <el-button @click="changeState(scope.row)" type="danger" size="mini" icon="el-icon-remove-outline"></el-button>
+                <el-button @click="handleClickChange(scope.row)" type="danger" size="mini" icon="el-icon-remove-outline"></el-button>
               </el-tooltip>
+              <el-button @click="handleClickView(scope.row)" type="info" icon="el-icon-view" size="mini"></el-button>
             </div>
             <div v-else-if="scope.row.flag == 0">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该用户已停用, 点击启用" placement="top" :enterable="false">
-                <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
+                <el-button @click="handleClickChange(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
               </el-tooltip>
+              <el-button @click="handleClickView(scope.row)" type="info" icon="el-icon-view" size="mini"></el-button>
             </div>
           </template>
         </el-table-column>
@@ -88,7 +90,7 @@
             <el-input v-model="usrData.name"></el-input>
           </el-form-item>
           <el-form-item label="性别"  prop="sex">
-            <el-select v-model="usrData.sex" style="width: 415px">
+            <el-select v-model="usrData.sex" style="width: 615px">
               <el-option value="男" key="男"></el-option>
               <el-option value="女" key="女"></el-option>
               <el-option value="不详" key="不详"></el-option>
@@ -115,7 +117,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCloseEdit">取 消</el-button>
-          <el-button type="primary" @click="updateUser(usrData)">确 定</el-button>
+          <el-button type="primary" @click="handleClickUpdate(usrData)">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -238,7 +240,7 @@ export default {
         return this.$message.error('获取数据失败')
       })
     },
-    changeState (row) {
+    handleClickChange (row) {
       let msg = ''
       if (row.flag === 1) msg = '此操作将停用该用户, 是否继续?'
       else if (row.flag === 0) msg = '此操作将启用该用户, 是否继续?'
@@ -264,11 +266,15 @@ export default {
       this.dialogTableVisible = true
       this.usrData = row
     },
+    handleClickView (row) {
+      this.dialogTableVisible = true
+      this.usrData = row
+    },
     handleCloseEdit () {
       this.dialogTableVisible = false
       this.$refs.usrFormRef.resetFields()
     },
-    updateUser (row) {
+    handleClickUpdate (row) {
       this.$refs.usrFormRef.validate(async valid => {
         if (!valid) {
           return this.$message.error('请确认信息')

@@ -25,7 +25,7 @@
           </el-row>
         </el-card>
         <el-form-item style="margin-top: 15px">
-          <el-button type="primary" @click='reset' v-loading.fullscreen.lock="loading">修改</el-button>
+          <el-button type="primary" @click='handleClickReset' v-loading.fullscreen.lock="loading">修改</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -54,7 +54,7 @@ export default {
     }
   },
   methods: {
-    async reset () {
+    async handleClickReset () {
       this.$refs.resetFormRef.validate(async valid1 => {
         if (!valid1) {
           return

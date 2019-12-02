@@ -63,19 +63,19 @@
             <div v-if="scope.row.flag == 1">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该机构已启用, 点击停用" placement="top" :enterable="false">
-                <el-button @click="changeState(scope.row)" type="danger" size="mini" icon="el-icon-remove-outline"></el-button>
+                <el-button @click="handleClickChange(scope.row)" type="danger" size="mini" icon="el-icon-remove-outline"></el-button>
               </el-tooltip>
             </div>
             <div v-else-if="scope.row.flag == 0">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该机构已停用, 点击启用" placement="top" :enterable="false">
-                <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
+                <el-button @click="handleClickChange(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
               </el-tooltip>
             </div>
             <div v-else-if="scope.row.flag == 9">
               <el-button @click="handleClickEdit(scope.row)" type="primary" icon="el-icon-edit" size="mini"></el-button>
               <el-tooltip class="item" effect="dark" content="该机构待激活, 点击激活" placement="top" :enterable="false">
-                <el-button @click="changeState(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
+                <el-button @click="handleClickChange(scope.row)" type="success" size="mini" icon="el-icon-circle-check"></el-button>
               </el-tooltip>
             </div>
           </template>
@@ -137,7 +137,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="handleCloseEdit">取 消</el-button>
-          <el-button type="primary" @click="updateOrg(orgData)">确 定</el-button>
+          <el-button type="primary" @click="handleClickUpdate(orgData)">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -287,7 +287,7 @@ export default {
         return this.$message.error('获取数据失败')
       })
     },
-    changeState (row) {
+    handleClickChange (row) {
       let msg = ''
       if (row.flag === 1) msg = '此操作将停用该机构, 是否继续?'
       else if (row.flag === 0) msg = '此操作将启用该机构, 是否继续?'
@@ -319,7 +319,7 @@ export default {
       this.dialogTableVisible = false
       this.$refs.orgFormRef.resetFields()
     },
-    updateOrg (row) {
+    handleClickUpdate (row) {
       this.$refs.orgFormRef.validate(async valid => {
         if (!valid) {
           return this.$message.error('请确认信息')

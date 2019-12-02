@@ -80,8 +80,8 @@
           </el-row>
         </el-card>
         <el-form-item style="margin-top: 15px">
-          <el-button type="primary" @click='save' v-loading.fullscreen.lock="loading">入驻</el-button>
-          <el-button type="info" @click='reset'>重置</el-button>
+          <el-button type="primary" @click='handleClickSave' v-loading.fullscreen.lock="loading">入驻</el-button>
+          <el-button type="info" @click='handleClickReset'>重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -319,7 +319,7 @@ export default {
     }
   },
   methods: {
-    save () {
+    handleClickSave () {
       this.$refs.addOrgFormRef.validate(async valid => {
         if (!valid) {
           return
@@ -340,7 +340,7 @@ export default {
         })
       })
     },
-    reset () {
+    handleClickReset () {
       this.$refs.addOrgFormRef.resetFields()
     }
   }

@@ -44,7 +44,7 @@
           </el-row>
         </el-card>
         <el-form-item style="margin-top: 15px">
-          <el-button type="primary" @click='complate' v-loading.fullscreen.lock="loading">修改</el-button>
+          <el-button type="primary" @click='handleClickComplate' v-loading.fullscreen.lock="loading">修改</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -130,7 +130,7 @@ export default {
         return this.$message.error('获取数据失败: ' + error)
       })
     },
-    async complate () {
+    async handleClickComplate () {
       this.$refs.usrFormRef.validate(async valid1 => {
         if (!valid1) {
           return

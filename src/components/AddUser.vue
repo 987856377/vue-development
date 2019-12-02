@@ -67,7 +67,7 @@
           </el-row>
         </el-card>
         <el-form-item style="margin-top: 15px">
-          <el-button type="primary" @click='save' v-loading.fullscreen.lock="loading">创建</el-button>
+          <el-button type="primary" @click='handleClickSave' v-loading.fullscreen.lock="loading">创建</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -164,7 +164,7 @@ export default {
         }
       })
     },
-    save () {
+    handleClickSave () {
       this.$refs.addUserFormRef.validate(async valid1 => {
         if (!valid1) {
           return
