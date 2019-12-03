@@ -160,6 +160,10 @@ export default {
           this.org.orgFlag = result.data.data.orgflag
           this.org.orgList = result.data.data.subOrgList
         }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.loading = false
+        return this.$message.error('获取数据失败')
       })
     },
     setOrgCode (name) {

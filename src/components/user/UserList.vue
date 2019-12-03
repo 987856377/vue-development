@@ -224,7 +224,6 @@ export default {
   },
   created () {
     this.getUserOrg()
-    this.getUserInfoList()
   },
   mounted () {
     this.getRoleListAvalible()
@@ -236,6 +235,7 @@ export default {
           this.org.orgName = result.data.data.name
           this.org.orgCode = result.data.data.code
           this.org.orgFlag = result.data.data.orgflag
+          return this.getUserInfoList()
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {

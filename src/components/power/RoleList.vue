@@ -46,35 +46,14 @@ export default {
   data () {
     return {
       roleList: [],
-      org: {
-        orgName: '',
-        orgCode: '',
-        orgFlag: ''
-      },
       flag: '',
       loading: false
     }
-  },
-  created () {
-    this.getUserOrg()
   },
   mounted () {
     this.getRoleListAvalible()
   },
   methods: {
-    async getUserOrg () {
-      await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.org.orgName = result.data.data.name
-          this.org.orgCode = result.data.data.code
-          this.org.orgFlag = result.data.data.orgflag
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        this.loading = false
-        return this.$message.error('获取数据失败')
-      })
-    },
     async getRoleListAvalible () {
       this.loading = true
       await this.$axios.post('userrole/getRoleListAvalible', {'uid': window.sessionStorage.getItem('id'), 'flag': ''}).then(result => {
