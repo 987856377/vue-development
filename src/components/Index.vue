@@ -37,8 +37,8 @@
               <span slot="title">权限控制</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="3-1">角色列表</el-menu-item>
-              <el-menu-item index="3-2">权限列表</el-menu-item>
+              <el-menu-item index="/roleListInfo">角色列表</el-menu-item>
+              <el-menu-item index="/perssionList">权限列表</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="4">
@@ -47,8 +47,8 @@
               <span slot="title">处方流转</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="4-1">处方列表</el-menu-item>
-              <el-menu-item index="4-2">流转详情</el-menu-item>
+              <el-menu-item index="/prescriptonList">处方列表</el-menu-item>
+              <el-menu-item index="/circulationInfo">流转详情</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="5">
@@ -57,9 +57,9 @@
               <span slot="title">数据统计</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="5-1">机构统计</el-menu-item>
-              <el-menu-item index="5-2">人员统计</el-menu-item>
-              <el-menu-item index="5-2">处方统计</el-menu-item>
+              <el-menu-item index="/organizationCount">机构统计</el-menu-item>
+              <el-menu-item index="/userCount">人员统计</el-menu-item>
+              <el-menu-item index="/prescriptionCount">处方统计</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="6">
@@ -68,10 +68,10 @@
               <span slot="title">消息详情</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="6-1">发送</el-menu-item>
-              <el-menu-item index="6-2">已发送</el-menu-item>
-              <el-menu-item index="6-3">已接收</el-menu-item>
-              <el-menu-item index="6-4">草稿箱</el-menu-item>
+              <el-menu-item index="/sendMessage">发送</el-menu-item>
+              <el-menu-item index="/inBox">已发送</el-menu-item>
+              <el-menu-item index="/outBox">已接收</el-menu-item>
+              <el-menu-item index="/draftBox">草稿箱</el-menu-item>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="7">

@@ -39,6 +39,50 @@ const router = new Router({
           component: () => import('@/components/user/ResetPassword')
         },
         {
+          path: '/roleListInfo',
+          component: () => import('@/components/power/RoleList')
+        },
+        {
+          path: '/perssionList',
+          component: () => import('@/components/power/PerssionList')
+        },
+        {
+          path: '/prescriptonList',
+          component: () => import('@/components/prescription/PrescriptionList')
+        },
+        {
+          path: '/circulationInfo',
+          component: () => import('@/components/prescription/CirculationInfo')
+        },
+        {
+          path: '/organizationCount',
+          component: () => import('@/components/count/OrganizationCount')
+        },
+        {
+          path: '/prescriptionCount',
+          component: () => import('@/components/count/PrescriptionCount')
+        },
+        {
+          path: '/userCount',
+          component: () => import('@/components/count/UserCount')
+        },
+        {
+          path: '/sendMessage',
+          component: () => import('@/components/message/SendMessage')
+        },
+        {
+          path: '/inBox',
+          component: () => import('@/components/message/InBox')
+        },
+        {
+          path: '/outBox',
+          component: () => import('@/components/message/OutBox')
+        },
+        {
+          path: '/draftBox',
+          component: () => import('@/components/message/DraftBox')
+        },
+        {
           path: '/config',
           component: () => import('@/components/Config')
         }
