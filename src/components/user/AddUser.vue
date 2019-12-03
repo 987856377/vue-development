@@ -50,14 +50,13 @@
           </el-form-item>
           <el-form-item label="所属机构" prop="orgname">
             <el-select v-model="userInfo.orgname" @change="setOrgCode(userInfo.orgname)">
-              <el-option v-for="item in orgList" :label="item.name" :key="item.name" :value="item.name"></el-option>
+              <el-option v-for="item in this.org.orgList" :label="item.name" :key="item.name" :value="item.name"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="角色" prop="role">
             <el-select v-model="userInfo.role">
-              <el-option label="审计员" value="AUDIT" key="AUDIT"></el-option>
-              <el-option label="录入员" value="ENTER" key="ENTER"></el-option>
-              <el-option label="普通用户" value="USER" key="USER"></el-option>
+              <el-option v-for="item in roleList" :key="item.code" :value="item.code" :label="item.title">
+              </el-option>
             </el-select>
           </el-form-item>
           <el-row>
@@ -96,10 +95,13 @@ export default {
         mail: '',
         role: ''
       },
-      orgName: '',
-      orgCode: '',
-      orgFlag: '',
-      orgList: [],
+      org: {
+        orgName: '',
+        orgCode: '',
+        orgFlag: '',
+        orgList: []
+      },
+      roleList: [],
       loading: false,
       rules1: {
         username: [
@@ -146,22 +148,35 @@ export default {
   created () {
     this.getUserOrg()
   },
+  mounted () {
+    this.getRoleListAvalible()
+  },
   methods: {
     async getUserOrg () {
       await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
         if (result.data.code === 200) {
-          this.orgName = result.data.data.name
-          this.orgCode = result.data.data.code
-          this.orgFlag = result.data.data.orgflag
-          this.orgList = result.data.data.subOrgList
+          this.org.orgName = result.data.data.name
+          this.org.orgCode = result.data.data.code
+          this.org.orgFlag = result.data.data.orgflag
+          this.org.orgList = result.data.data.subOrgList
         }
       })
     },
     setOrgCode (name) {
-      this.orgList.forEach(item => {
+      this.org.orgList.forEach(item => {
         if (item.name === name) {
           this.userInfo.orgcode = item.code
         }
+      })
+    },
+    async getRoleListAvalible () {
+      await this.$axios.post('userrole/getRoleListAvalible', {'uid': window.sessionStorage.getItem('id')}).then(result => {
+        if (result.data.code === 200) {
+          this.roleList = result.data.data
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$message.error('获取用户可操作角色数据失败')
       })
     },
     handleClickSave () {
@@ -187,7 +202,7 @@ export default {
               }
               await this.$axios.post('userrole/addUserRole', {'uid': this.userInfo.id, 'destRole': this.userInfo.role})
               this.loading = false
-              this.$router.push('/userList')
+              await this.$router.push('/userList')
               return this.$message.success('用户注册成功')
             }).catch(error => {
               this.loading = false

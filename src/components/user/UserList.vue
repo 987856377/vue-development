@@ -297,10 +297,8 @@ export default {
         if (result.data.code === 200) {
           this.roleList = result.data.data
         }
-        this.waiting = false
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        this.waiting = false
         return this.$message.error('获取用户可操作角色数据失败')
       })
     },
@@ -344,6 +342,11 @@ export default {
     async handleClickAddRole () {
       if (this.role.uid === null || this.role.uid === '' || this.role.destRole === null || this.role.destRole === '') {
         return
+      }
+      for (let i = 0; i < this.roleData.length; i++) {
+        if (this.roleData[i].code === this.role.destRole) {
+          return this.$message.error('改用户已拥有该角色')
+        }
       }
       this.waiting = true
       await this.$axios.post('userrole/addUserRole', this.role).then(result => {
