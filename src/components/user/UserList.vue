@@ -237,6 +237,10 @@ export default {
           this.org.orgCode = result.data.data.code
           this.org.orgFlag = result.data.data.orgflag
         }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.loading = false
+        return this.$message.error('获取数据失败')
       })
     },
     getUserInfo () {
