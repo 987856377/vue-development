@@ -151,7 +151,7 @@
 
 <script>
 export default {
-  name: 'OrganizationList',
+  name: 'UserList',
   data () {
     return {
       query: '',
