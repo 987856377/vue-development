@@ -56,6 +56,7 @@ export default {
   methods: {
     async getRoleListAvalible () {
       this.loading = true
+      // 获取所有角色: flag传空值, 获取所有角色, 不传flag, 获取默认获取所有已启用的角色(后端代码flag 默认为1)
       await this.$axios.post('userrole/getRoleListAvalible', {'uid': window.sessionStorage.getItem('id'), 'flag': ''}).then(result => {
         if (result.data.code === 200) {
           this.roleList = result.data.data
