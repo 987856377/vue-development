@@ -349,7 +349,7 @@ export default {
       }
       for (let i = 0; i < this.roleData.length; i++) {
         if (this.roleData[i].code === this.role.destRole) {
-          return this.$message.error('改用户已拥有该角色')
+          return this.$message.error('该用户已拥有该角色')
         }
       }
       this.waiting = true

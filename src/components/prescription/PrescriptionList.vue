@@ -9,13 +9,20 @@
     <!--    卡片视图-->
     <el-card>
       <!--      搜索与添加-->
-      <el-row>
-        <el-col :span="7">
-          <el-input placeholder="请输入用户名进行查询" clearable @clear="getPrescriptionList">
-            <el-button slot="append" icon="el-icon-search" @click="getPrescriptionList"></el-button>
+      <el-row :gutter="20">
+        <el-col :span="3">
+          <el-input placeholder="处方号" v-model="request.id" clearable @clear="getPrescriptionList">
           </el-input>
         </el-col>
-        <el-col :span="4"></el-col>
+        <el-col :span="5">
+          <el-input placeholder="归属科室" v-model="request.department" clearable @clear="getPrescriptionList">
+          </el-input>
+        </el-col>
+        <el-col :span="7">
+          <el-input placeholder="适用症" v-model="request.symptom" clearable @clear="getPrescriptionList">
+          </el-input>
+        </el-col>
+        <el-col :span="4"><el-button icon="el-icon-search" @click="getPrescriptionList">检索</el-button></el-col>
       </el-row>
       <!--      表单-->
       <el-table :data="tableData" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
@@ -48,6 +55,10 @@
             <div v-else-if="scope.row.verify == 0" style="color: red; text-align: center">待审核</div>
           </template>
         </el-table-column>
+        <el-table-column prop="operatorName" label="审核员" width="120" align="center">
+        </el-table-column>
+        <el-table-column prop="verifyTime" label="审核日期" width="140" align="center" >
+        </el-table-column>
         <el-table-column prop="enable" label="流转状态" width="120" sortable  align="center" >
           <template slot-scope="scope">
             <div v-if="scope.row.enable == 1" style="text-align: center">可流转</div>
@@ -56,7 +67,7 @@
         </el-table-column>
         <el-table-column prop="flag" fixed="right" label="操作" align="center" width="120px">
           <template slot-scope="scope">
-            <el-button @click="handleClickView(scope.row)" type="success" icon="el-icon-search" size="mini">详情</el-button>
+            <el-button @click="handleClickView(scope.row)" type="success" icon="el-icon-view" size="mini">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,21 +82,47 @@
         :total="total">
       </el-pagination>
       <!--      编辑对话框-->
-      <el-dialog title="详情" :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-
-        <el-form ref="prescriptionFormRef" :model="prescriptionData" label-width="100px" size="mini">
-          <el-form-item label="机构" prop="orgname">
-            <el-input v-model="prescriptionData.orgname" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="录入者" prop="uname">
-            <el-input v-model="prescriptionData.uname"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
+      <el-dialog :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <div style="border-style: solid; border-width: 1px; height: 700px;">
+          <div>
+            <h2>{{prescriptionData.orgname}}</h2>
+            <div>
+              <h2>处方笺</h2>
+              <div style="position: absolute; margin-left: 550px; margin-top: -70px; border-style: solid; border-width: 1px;">
+                <div v-if="prescriptionData.type == 1" style="padding: 5px">普通处方</div>
+                <div v-if="prescriptionData.type == 2" style="color: red; padding: 5px">特殊处方</div>
+              </div>
+            </div>
+          </div>
+          <div style="height: 100px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
+            <div style="position: absolute; margin-left: 20px">处方编号: {{prescriptionData.id}}</div>
+            <div style="position: absolute; margin-left: 280px">归属科室: {{prescriptionData.department}}</div>
+            <div style="position: absolute; margin-left: 500px">录入人员: {{prescriptionData.uname}}</div>
+            <div style="position: absolute; margin-left: 20px; margin-top: 30px">适用症状: {{prescriptionData.symptom}}</div>
+            <div style="position: absolute; margin-left: 280px; margin-top: 30px">适用年龄: {{prescriptionData.age}}</div>
+            <div style="position: absolute; margin-left: 500px; margin-top: 30px">适用性别: {{prescriptionData.sex}}</div>
+            <div style="position: absolute; margin-left: 20px; margin-top: 60px">开方日期: {{prescriptionData.date}}</div>
+          </div>
+          <div style="height: 400px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
+            <div style="position: absolute; margin-left: 20px"><h2>Rp.</h2></div>
+            <div style="height: 280px; width: 575px; margin-left: 30px; margin-top: 45px; border-style: solid; border-width: 1px">
+              <div style="position: absolute; margin-left: 200px; margin-top: 30px">{{prescriptionData.medicine}}</div>
+            </div>
+            <div style="position: absolute; margin-left: 40px; margin-top: 10px">医嘱: {{prescriptionData.advice}}</div>
+            <div style="position: absolute; margin-left: 500px; margin-top: 30px">Price: {{prescriptionData.price}}</div>
+          </div>
+          <div style="height: 80px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
+            <div style="position: absolute; margin-left: 20px">开方医生: {{prescriptionData.doctorName}}</div>
+            <div style="position: absolute; margin-left: 280px">审核医生: {{prescriptionData.checkDoctor}}</div>
+            <div style="position: absolute; margin-left: 20px; margin-top: 30px">开方医生手机: {{prescriptionData.doctorPhone}}</div>
+            <div style="position: absolute; margin-left: 280px; margin-top: 30px">审核医生手机: {{prescriptionData.checkPhone}}</div>
+          </div>
+        </div>
+        <div slot="footer" class="dialog-footer" align="center">
           <el-button @click="handleCloseView">取 消</el-button>
           <el-button type="primary" @click="handleClickUpdate(prescriptionData)">确 定</el-button>
         </div>
-      </el-dialog>
+        </el-dialog>
     </el-card>
   </div>
 </template>
@@ -99,6 +136,7 @@ export default {
           current: 1,
           size: 5
         },
+        id: '',
         orgname: '',
         department: '',
         type: '',
