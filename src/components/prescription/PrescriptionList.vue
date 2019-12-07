@@ -402,8 +402,12 @@ export default {
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
           this.loading = true
-          if (row.flag === 1) row.flag = 0
-          else if (row.flag === 0) row.flag = 1
+          if (row.flag === 1) {
+            row.flag = 0
+            row.enable = 0
+          } else if (row.flag === 0) {
+            row.flag = 1
+          }
           await this.$axios.post('prescription/status/stopCirculate', {'pid': row.id, 'flag': row.flag}).then(result => {
             this.loading = false
             return this.$message({ type: 'success', message: '更新处方状态成功!' })
