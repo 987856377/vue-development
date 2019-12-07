@@ -269,8 +269,8 @@ export default {
       })
     },
     handleClickDeny (prescriptionData) {
-      if (this.acceptStatus === 9) {
-        return this.$notify({ type: 'info', message: '处方已拒绝, 不需重复拒绝' })
+      if (this.acceptStatus === 9 || this.acceptStatus === 1) {
+        return this.$notify({ type: 'info', message: '处方已被处理, 不需重复操作' })
       }
       this.$prompt('请输入原因', '备注', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async ({ value }) => {
