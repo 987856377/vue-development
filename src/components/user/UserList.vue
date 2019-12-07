@@ -115,7 +115,7 @@
             <el-input v-model="usrData.orgname" disabled></el-input>
           </el-form-item>
         </el-form>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer" class="dialog-footer" align="center">
           <el-button @click="handleCloseEdit">取 消</el-button>
           <el-button type="primary" @click="handleClickUpdate(usrData)">确 定</el-button>
         </div>
@@ -141,7 +141,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <div slot="footer" class="dialog-footer">
+        <div slot="footer" class="dialog-footer" align="center">
           <el-button @click="handleCloseRoleDialog">关 闭</el-button>
         </div>
       </el-dialog>

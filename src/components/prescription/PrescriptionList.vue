@@ -43,7 +43,7 @@
         </el-table-column>
         <el-table-column prop="date" label="开方日期" width="140" align="center" >
         </el-table-column>
-        <el-table-column prop="flag" label="流转状态" width="120" sortable  align="center" >
+        <el-table-column prop="flag" label="状态" width="120" sortable  align="center" >
           <template slot-scope="scope">
             <div v-if="scope.row.flag == 1" style="text-align: center">已启用</div>
             <div v-else-if="scope.row.flag == 0" style="color: red; text-align: center">已停用</div>
@@ -52,7 +52,8 @@
         <el-table-column prop="verify" label="审核状态" width="120" sortable  align="center" >
           <template slot-scope="scope">
             <div v-if="scope.row.verify == 1" style="text-align: center">已审核</div>
-            <div v-else-if="scope.row.verify == 0" style="color: red; text-align: center">待审核</div>
+            <div v-else-if="scope.row.verify == 0" style="color: red; text-align: center">未通过</div>
+            <div v-else-if="scope.row.verify == 9" style="color: red; text-align: center">待审核</div>
           </template>
         </el-table-column>
         <el-table-column prop="operatorName" label="审核员" width="120" align="center">
@@ -65,9 +66,22 @@
             <div v-else-if="scope.row.enable == 0" style="color: red; text-align: center">不可流转</div>
           </template>
         </el-table-column>
-        <el-table-column prop="flag" fixed="right" label="操作" align="center" width="120px">
+        <el-table-column prop="extra" label="备注" width="140" align="center" >
+        </el-table-column>
+        <el-table-column prop="flag" fixed="right" label="操作" align="center" width="255px">
           <template slot-scope="scope">
-            <el-button @click="handleClickView(scope.row)" type="success" icon="el-icon-view" size="mini">详情</el-button>
+            <div v-if="scope.row.flag == 1">
+              <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
+              <el-button @click="handleClickChange(scope.row)" type="danger" icon="el-icon-remove-outline" size="mini"></el-button>
+              <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
+              <el-button @click="handleCirculateDialog(scope.row)" type="warning" icon="el-icon-sort" size="mini"></el-button>
+            </div>
+            <div v-else-if="scope.row.flag == 0">
+              <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
+              <el-button @click="handleClickChange(scope.row)" type="success" icon="el-icon-circle-check" size="mini"></el-button>
+              <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
+              <el-button @click="handleCirculateDialog(scope.row)" type="warning" icon="el-icon-sort" size="mini"></el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -81,7 +95,7 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
-      <!--      编辑对话框-->
+      <!--      处方对话框-->
       <el-dialog :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
         <div style="border-style: solid; border-width: 1px; height: 700px;">
           <div>
@@ -98,10 +112,10 @@
             <div style="position: absolute; margin-left: 20px">处方编号: {{prescriptionData.id}}</div>
             <div style="position: absolute; margin-left: 280px">归属科室: {{prescriptionData.department}}</div>
             <div style="position: absolute; margin-left: 500px">录入人员: {{prescriptionData.uname}}</div>
-            <div style="position: absolute; margin-left: 20px; margin-top: 30px">适用症状: {{prescriptionData.symptom}}</div>
             <div style="position: absolute; margin-left: 280px; margin-top: 30px">适用年龄: {{prescriptionData.age}}</div>
             <div style="position: absolute; margin-left: 500px; margin-top: 30px">适用性别: {{prescriptionData.sex}}</div>
-            <div style="position: absolute; margin-left: 20px; margin-top: 60px">开方日期: {{prescriptionData.date}}</div>
+            <div style="position: absolute; margin-left: 20px; margin-top: 30px">开方日期: {{prescriptionData.date}}</div>
+            <div style="position: absolute; margin-left: 20px; margin-top: 60px">适用症状: {{prescriptionData.symptom}}</div>
           </div>
           <div style="height: 400px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
             <div style="position: absolute; margin-left: 20px"><h2>Rp.</h2></div>
@@ -119,10 +133,28 @@
           </div>
         </div>
         <div slot="footer" class="dialog-footer" align="center">
-          <el-button @click="handleCloseView">取 消</el-button>
-          <el-button type="primary" @click="handleClickUpdate(prescriptionData)">确 定</el-button>
+          <div v-if="roleFlag == true">
+            <el-button @click="handleCloseView">关 闭</el-button>
+            <el-button type="primary" @click="handleClickPass(prescriptionData)">通  过</el-button>
+            <el-button type="danger" @click="handleClickUnPass(prescriptionData)">不通过</el-button>
+          </div>
+          <div v-else-if="roleFlag == false">
+            <el-button @click="handleCloseView">关 闭</el-button>
+          </div>
         </div>
-        </el-dialog>
+      </el-dialog>
+      <!--      流转对话框-->
+      <el-dialog :visible.sync="dialogPrescriptionVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <el-form ref="prescriptionFormRef" :model="prescriptionData" :rules="rules" label-width="100px" size="mini">
+          <el-form-item label="处方编号" prop="id">
+            <el-input v-model="prescriptionData.id" disabled></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer" align="center">
+          <el-button @click="handleCloseCirculateDialog">取 消</el-button>
+          <el-button type="primary" @click="handleCloseCirculateDialog">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -146,6 +178,8 @@ export default {
         enable: ''
       },
       roleList: [],
+      roleFlag: false,
+      operatorName: '',
       org: {
         orgName: '',
         orgCode: '',
@@ -156,14 +190,17 @@ export default {
       waiting: false,
       total: 0,
       dialogTableVisible: false,
-      tableData: []
+      dialogPrescriptionVisible: false,
+      tableData: [],
+      rules: {}
     }
   },
   created () {
     this.getUserOrg()
   },
   mounted () {
-    this.getRoleListAvalible()
+    this.getRoleList()
+    this.getRealNameById()
   },
   methods: {
     async getUserOrg () {
@@ -201,14 +238,29 @@ export default {
         return this.$message.error('获取数据失败')
       })
     },
-    async getRoleListAvalible () {
-      await this.$axios.post('userrole/getRoleListAvalible', {'uid': window.sessionStorage.getItem('id')}).then(result => {
+    async getRoleList () {
+      await this.$axios.post('userrole/getRoleList', {'uid': window.sessionStorage.getItem('id')}).then(result => {
         if (result.data.code === 200) {
           this.roleList = result.data.data
+          this.roleList.forEach(item => {
+            if (item.code === 'AUDIT') {
+              this.roleFlag = true
+            }
+          })
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         return this.$message.error('获取用户可操作角色数据失败')
+      })
+    },
+    async getRealNameById () {
+      await this.$axios.post('user/getRealNameById', {'id': window.sessionStorage.getItem('id')}).then(result => {
+        if (result.data.code === 200) {
+          this.operatorName = result.data.data
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$message.error('获取用户姓名失败')
       })
     },
     handleClickView (row) {
@@ -217,24 +269,102 @@ export default {
     },
     handleCloseView () {
       this.dialogTableVisible = false
-      this.$refs.prescriptionFormRef.resetFields()
+    },
+    handleCirculateDialog (row) {
+      this.dialogPrescriptionVisible = true
+      this.prescriptionData = row
+    },
+    handleCloseCirculateDialog () {
+      this.dialogPrescriptionVisible = false
+    },
+    async handleClickPass (prescriptionData) {
+      if (prescriptionData.verify === 1) {
+        return this.$notify({ type: 'info', message: '处方已审核, 不需重复审核' })
+      }
+      await this.$axios.post('prescription/status/verifyPrescription', {'pid': prescriptionData.id,
+        'operator': window.sessionStorage.getItem('id'),
+        'operatorName': this.operatorName,
+        'verify': 1}).then(result => {
+        if (result.data.code === 200) {
+          this.getPrescriptionList()
+          return this.$notify({ type: 'success', message: '处方已审核通过' })
+        } else {
+          return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+      })
+    },
+    handleClickUnPass (prescriptionData) {
+      if (prescriptionData.verify === 0) {
+        return this.$notify({ type: 'info', message: '处方未通过审核' })
+      }
+      this.$prompt('请输入原因', '备注', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
+        .then(async ({ value }) => {
+          await this.$axios.post('prescription/status/verifyPrescription', {'pid': prescriptionData.id,
+            'operator': window.sessionStorage.getItem('id'),
+            'operatorName': this.operatorName,
+            'verify': 0,
+            'extra': value}).then(result => {
+            if (result.data.code === 200) {
+              this.getPrescriptionList()
+              return this.$notify({ type: 'warning', message: '处方未通过审核' })
+            } else {
+              return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+            }
+            // eslint-disable-next-line handle-callback-err
+          }).catch(error => {
+            return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+          })
+        }).catch(() => {
+          this.$notify({ type: 'error', message: '取消输入' })
+        })
     },
     handleClickChange (row) {
+      if (row.verify !== 1) {
+        return this.$message({ type: 'error', message: '该处方还未通过审核, 不可启用' })
+      }
       let msg = ''
-      if (row.flag === 1) msg = '此操作将停用该用户, 是否继续?'
-      else if (row.flag === 0) msg = '此操作将启用该用户, 是否继续?'
+      if (row.flag === 1) msg = '此操作将停用该处方, 是否继续?'
+      else if (row.flag === 0) msg = '此操作将启用该处方, 是否继续?'
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
           this.loading = true
           if (row.flag === 1) row.flag = 0
           else if (row.flag === 0) row.flag = 1
-          await this.$axios.post('user/cancelUserById', {'id': row.id, 'flag': row.flag}).then(result => {
+          await this.$axios.post('prescription/status/stopCirculate', {'pid': row.id, 'flag': row.flag}).then(result => {
             this.loading = false
-            return this.$message({ type: 'success', message: '更新用户状态成功!' })
+            return this.$message({ type: 'success', message: '更新处方状态成功!' })
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
-            return this.$message({ type: 'error', message: '更新用户状态失败!' })
+            return this.$message({ type: 'error', message: '更新处方状态失败!' })
+          })
+        }).catch(() => {
+          this.loading = false
+          this.$message({ type: 'info', message: '已取消操作' })
+        })
+    },
+    handleClickCirculate (row) {
+      if (row.verify !== 1) {
+        return this.$message({ type: 'error', message: '该处方还未通过审核, 不可设置流转状态' })
+      }
+      let msg = ''
+      if (row.enable === 1) msg = '此操作将设置该处方不可流转, 是否继续?'
+      else if (row.enable === 0) msg = '此操作将设置该处方可流转, 是否继续?'
+      this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
+        .then(async () => {
+          this.loading = true
+          if (row.enable === 1) row.enable = 0
+          else if (row.enable === 0) row.enable = 1
+          await this.$axios.post('prescription/status/enableCirculate', {'pid': row.id, 'enable': row.enable}).then(result => {
+            this.loading = false
+            return this.$message({ type: 'success', message: '更新处方流转状态成功!' })
+            // eslint-disable-next-line handle-callback-err
+          }).catch(error => {
+            this.loading = false
+            return this.$message({ type: 'error', message: '更新处方流转状态失败!' })
           })
         }).catch(() => {
           this.loading = false
