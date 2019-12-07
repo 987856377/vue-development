@@ -66,6 +66,12 @@
             <div v-else-if="scope.row.enable === 0" style="color: red; text-align: center">不可流转</div>
           </template>
         </el-table-column>
+        <el-table-column prop="origin" label="处方来源" width="120" sortable  align="center" >
+          <template slot-scope="scope">
+            <div v-if="scope.row.origin === 1" style="text-align: center">本地</div>
+            <div v-else-if="scope.row.origin === 9" style="color: #1500FE; text-align: center">外来</div>
+          </template>
+        </el-table-column>
         <el-table-column prop="extra" label="备注" width="140" align="center" >
         </el-table-column>
         <el-table-column prop="flag" fixed="right" label="操作" align="center" width="255px">

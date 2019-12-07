@@ -244,11 +244,22 @@ export default {
         return this.$notify({ type: 'info', message: '处方已接收, 不需重复接收' })
       }
       await this.$axios.post('prescription/circulationinfo/acceptPrescription', {'id': this.circulation_info_id,
-        'acceptStatus': 1}).then(result => {
+        'acceptStatus': 1}).then(async result => {
         if (result.data.code === 200) {
           this.dialogTableVisible = false
           this.getCirculationInfoList()
-          return this.$notify({ type: 'success', message: '处方已接收' })
+          prescriptionData.id = ''
+          prescriptionData.orgcode = this.org.orgCode
+          prescriptionData.orgname = this.org.orgName
+          prescriptionData.origin = 9
+          await this.$axios.post('prescription/detail/saveOrUpdate', prescriptionData).then(result => {
+            if (result.data.code === 200) {
+              return this.$notify({ type: 'success', message: '处方已接收' })
+            }
+            // eslint-disable-next-line handle-callback-err
+          }).catch(error => {
+            return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+          })
         } else {
           return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
         }
