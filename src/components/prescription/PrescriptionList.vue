@@ -145,14 +145,27 @@
       </el-dialog>
       <!--      流转对话框-->
       <el-dialog :visible.sync="dialogPrescriptionVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
-        <el-form ref="prescriptionFormRef" :model="prescriptionData" :rules="rules" label-width="100px" size="mini">
+        <el-form ref="prescriptionFormRef" :model="circulationInfo" :rules="rules" label-width="100px" size="mini">
           <el-form-item label="处方编号" prop="id">
-            <el-input v-model="prescriptionData.id" disabled></el-input>
+            <el-input v-model="circulationInfo.pid" disabled style="width: 300px"></el-input>
+          </el-form-item>
+          <el-form-item label="目标机构" prop="achieveName">
+            <el-select v-model="circulationInfo.achieveName" @change="setOrgCode(circulationInfo.achieveName)" style="width: 300px">
+              <el-option v-for="item in this.org.orgList" :label="item.name" :key="item.name" :value="item.name"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="接收人员" prop="receiverName">
+            <el-select v-model="circulationInfo.receiverName" @change="setReceiver(circulationInfo.receiverName)" style="width: 300px">
+              <el-option v-for="item in this.receiverList" :label="item.name" :key="item.name" :value="item.name"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="备注" prop="extra">
+            <el-input v-model="circulationInfo.extra" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" style="width: 400px"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer" align="center">
           <el-button @click="handleCloseCirculateDialog">取 消</el-button>
-          <el-button type="primary" @click="handleCloseCirculateDialog">确 定</el-button>
+          <el-button type="primary" @click="handleClickSendPrescription">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -177,13 +190,27 @@ export default {
         verify: '',
         enable: ''
       },
+      circulationInfo: {
+        pid: '',
+        sender: '',
+        senderName: '',
+        originCode: '',
+        originName: '',
+        achieveCode: '',
+        achieveName: '',
+        receiver: '',
+        receiverName: '',
+        extra: ''
+      },
+      receiverList: [],
       roleList: [],
       roleFlag: false,
       operatorName: '',
       org: {
         orgName: '',
         orgCode: '',
-        orgFlag: ''
+        orgFlag: '',
+        orgList: []
       },
       prescriptionData: Object,
       loading: false,
@@ -209,6 +236,7 @@ export default {
           this.org.orgName = result.data.data.name
           this.org.orgCode = result.data.data.code
           this.org.orgFlag = result.data.data.orgflag
+          this.org.orgList = result.data.data.subOrgList
           this.request.orgname = result.data.data.name
           return this.getPrescriptionList()
         }
@@ -273,9 +301,52 @@ export default {
     handleCirculateDialog (row) {
       this.dialogPrescriptionVisible = true
       this.prescriptionData = row
+      this.circulationInfo.pid = row.id
+      this.circulationInfo.sender = window.sessionStorage.getItem('id')
+      this.circulationInfo.senderName = this.operatorName
+      this.circulationInfo.originCode = this.org.orgCode
+      this.circulationInfo.originName = this.org.orgName
+    },
+    setOrgCode (name) {
+      this.org.orgList.forEach(async item => {
+        if (item.name === name) {
+          this.circulationInfo.achieveCode = item.code
+          await this.$axios.post('userinfo/getUserInfoByOrgCodeOrName', {'orgcode': this.circulationInfo.achieveCode}).then(result => {
+            if (result.data.code === 200) {
+              this.receiverList = result.data.data
+              this.circulationInfo.receiverName = ''
+            } else {
+              return this.$notify({ type: 'error', message: '获取目标机构人员列表失败' })
+            }
+            // eslint-disable-next-line handle-callback-err
+          }).catch(error => {
+            return this.$notify({ type: 'error', message: '获取目标机构人员列表失败' })
+          })
+        }
+      })
+    },
+    setReceiver (name) {
+      this.receiverList.forEach(item => {
+        if (item.name === name) {
+          this.circulationInfo.receiver = item.id
+        }
+      })
     },
     handleCloseCirculateDialog () {
       this.dialogPrescriptionVisible = false
+    },
+    async handleClickSendPrescription () {
+      await this.$axios.post('prescription/circulationinfo/saveOrUpdate', this.circulationInfo).then(result => {
+        if (result.data.code === 200) {
+          this.dialogPrescriptionVisible = false
+          return this.$notify({ type: 'success', message: '流转成功' })
+        } else {
+          return this.$notify({ type: 'error', message: '流转失败,详情请咨询管理员' })
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$notify({ type: 'error', message: '流转失败,详情请咨询管理员' })
+      })
     },
     async handleClickPass (prescriptionData) {
       if (prescriptionData.verify === 1) {
