@@ -51,9 +51,9 @@
         </el-table-column>
         <el-table-column prop="verify" label="审核状态" width="120" sortable  align="center" >
           <template slot-scope="scope">
-            <div v-if="scope.row.verify == 1" style="text-align: center">已审核</div>
-            <div v-else-if="scope.row.verify == 0" style="color: red; text-align: center">未通过</div>
-            <div v-else-if="scope.row.verify == 9" style="color: red; text-align: center">待审核</div>
+            <div v-if="scope.row.verify === 1" style="text-align: center">已审核</div>
+            <div v-else-if="scope.row.verify === 0" style="color: red; text-align: center">未通过</div>
+            <div v-else-if="scope.row.verify === 9" style="color: red; text-align: center">待审核</div>
           </template>
         </el-table-column>
         <el-table-column prop="operatorName" label="审核员" width="120" align="center">
@@ -62,21 +62,21 @@
         </el-table-column>
         <el-table-column prop="enable" label="流转状态" width="120" sortable  align="center" >
           <template slot-scope="scope">
-            <div v-if="scope.row.enable == 1" style="text-align: center">可流转</div>
-            <div v-else-if="scope.row.enable == 0" style="color: red; text-align: center">不可流转</div>
+            <div v-if="scope.row.enable === 1" style="text-align: center">可流转</div>
+            <div v-else-if="scope.row.enable === 0" style="color: red; text-align: center">不可流转</div>
           </template>
         </el-table-column>
         <el-table-column prop="extra" label="备注" width="140" align="center" >
         </el-table-column>
         <el-table-column prop="flag" fixed="right" label="操作" align="center" width="255px">
           <template slot-scope="scope">
-            <div v-if="scope.row.flag == 1">
+            <div v-if="scope.row.flag === 1">
               <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
               <el-button @click="handleClickChange(scope.row)" type="danger" icon="el-icon-remove-outline" size="mini"></el-button>
               <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
               <el-button @click="handleCirculateDialog(scope.row)" type="warning" icon="el-icon-sort" size="mini"></el-button>
             </div>
-            <div v-else-if="scope.row.flag == 0">
+            <div v-else-if="scope.row.flag === 0">
               <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
               <el-button @click="handleClickChange(scope.row)" type="success" icon="el-icon-circle-check" size="mini"></el-button>
               <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
@@ -133,12 +133,12 @@
           </div>
         </div>
         <div slot="footer" class="dialog-footer" align="center">
-          <div v-if="roleFlag == true">
+          <div v-if="roleFlag === true">
             <el-button @click="handleCloseView">关 闭</el-button>
             <el-button type="primary" @click="handleClickPass(prescriptionData)">通  过</el-button>
             <el-button type="danger" @click="handleClickUnPass(prescriptionData)">不通过</el-button>
           </div>
-          <div v-else-if="roleFlag == false">
+          <div v-else-if="roleFlag === false">
             <el-button @click="handleCloseView">关 闭</el-button>
           </div>
         </div>
@@ -219,7 +219,16 @@ export default {
       dialogTableVisible: false,
       dialogPrescriptionVisible: false,
       tableData: [],
-      rules: {}
+      rules: {
+        achieveName: [
+          { required: true, message: '请选择接收处方的机构', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
+        receiverName: [
+          { required: true, message: '请选择接收处方的人员', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
@@ -258,7 +267,7 @@ export default {
           return this.tableData = result.data.data.records
         } else {
           this.loading = false
-          return this.$message.error('获取数据失败')
+          return this.$message.error('获取数据失败: ' + result.data.message)
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
@@ -336,6 +345,9 @@ export default {
       this.dialogPrescriptionVisible = false
     },
     async handleClickSendPrescription () {
+      if (this.circulationInfo.achieveName === '' || this.circulationInfo.receiverName === '') {
+        return
+      }
       await this.$axios.post('prescription/circulationinfo/saveOrUpdate', this.circulationInfo).then(result => {
         if (result.data.code === 200) {
           this.dialogPrescriptionVisible = false
