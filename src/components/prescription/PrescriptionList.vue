@@ -369,6 +369,8 @@ export default {
     handleClickUnPass (prescriptionData) {
       if (prescriptionData.verify === 0) {
         return this.$notify({ type: 'info', message: '处方未通过审核' })
+      } else if (prescriptionData.verify === 1) {
+        return this.$notify({ type: 'info', message: '处方已通过审核, 不可设置为未通过状态' })
       }
       this.$prompt('请输入原因', '备注', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async ({ value }) => {
