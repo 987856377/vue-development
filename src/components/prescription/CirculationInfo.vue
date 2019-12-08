@@ -134,12 +134,6 @@ export default {
       circulation_info_id: '',
       acceptStatus: '',
       operatorName: '',
-      org: {
-        orgName: '',
-        orgCode: '',
-        orgFlag: '',
-        orgList: []
-      },
       prescriptionData: Object,
       loading: false,
       waiting: false,
@@ -149,29 +143,14 @@ export default {
     }
   },
   created () {
-    this.getUserOrg()
+    this.request.code = window.sessionStorage.getItem('orgCode')
+    this.getCirculationInfoList()
   },
   mounted () {
     this.getRoleList()
     this.getRealNameById()
   },
   methods: {
-    async getUserOrg () {
-      await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.org.orgName = result.data.data.name
-          this.org.orgCode = result.data.data.code
-          this.org.orgFlag = result.data.data.orgflag
-          this.org.orgList = result.data.data.subOrgList
-          this.request.code = result.data.data.code
-          return this.getCirculationInfoList()
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        this.loading = false
-        return this.$message.error('获取数据失败')
-      })
-    },
     getCirculationInfoList () {
       this.loading = true
       this.$axios.post('prescription/circulationinfo/getCirculationInfoList', this.request).then(result => {
@@ -249,8 +228,8 @@ export default {
           this.dialogTableVisible = false
           this.getCirculationInfoList()
           prescriptionData.id = ''
-          prescriptionData.orgcode = this.org.orgCode
-          prescriptionData.orgname = this.org.orgName
+          prescriptionData.orgcode = window.sessionStorage.getItem('orgCode')
+          prescriptionData.orgname = window.sessionStorage.getItem('orgName')
           prescriptionData.origin = 9
           await this.$axios.post('prescription/detail/saveOrUpdate', prescriptionData).then(result => {
             if (result.data.code === 200) {

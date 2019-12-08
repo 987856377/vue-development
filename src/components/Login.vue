@@ -59,11 +59,24 @@ export default {
           window.sessionStorage.setItem('Authorization', result.headers.authorization)
           window.sessionStorage.setItem('username', this.user.username)
           await this.$axios.post('user/getIdByUsername', {'username': this.user.username}).then(async result1 => {
-            if (result1.data.code !== 200) {
+            if (result1.data.code === 200) {
+              window.sessionStorage.setItem('id', result1.data.data)
+              await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
+                if (result.data.code === 200) {
+                  window.sessionStorage.setItem('orgCode', result.data.data.code)
+                  window.sessionStorage.setItem('orgName', result.data.data.name)
+                  window.sessionStorage.setItem('orgFlag', result.data.data.orgflag)
+                  window.sessionStorage.setItem('orgList', JSON.stringify(result.data.data.subOrgList))
+                }
+                // eslint-disable-next-line handle-callback-err
+              }).catch(error => {
+                this.loading = false
+                return this.$message.error('获取数据失败' + error.message)
+              })
+            } else {
               this.loading = false
               return this.$message.error('登录失败')
             }
-            window.sessionStorage.setItem('id', result1.data.data)
           })
           await this.$router.push('/')
           this.loading = false

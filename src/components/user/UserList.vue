@@ -223,26 +223,12 @@ export default {
     }
   },
   created () {
-    this.getUserOrg()
+    this.getUserInfoList()
   },
   mounted () {
     this.getRoleListAvalible()
   },
   methods: {
-    async getUserOrg () {
-      await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.org.orgName = result.data.data.name
-          this.org.orgCode = result.data.data.code
-          this.org.orgFlag = result.data.data.orgflag
-          return this.getUserInfoList()
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        this.loading = false
-        return this.$message.error('获取数据失败')
-      })
-    },
     getUserInfo () {
       if (this.query === '') {
         return
@@ -265,7 +251,7 @@ export default {
     },
     getUserInfoList () {
       this.loading = true
-      this.$axios.post('userinfo/getUserInfoPage', { page: this.page, 'orgflag': this.org.orgFlag }).then(result => {
+      this.$axios.post('userinfo/getUserInfoPage', { page: this.page, 'orgflag': window.sessionStorage.getItem('orgFlag') }).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size

@@ -157,7 +157,7 @@
           </el-form-item>
           <el-form-item label="目标机构" prop="achieveName">
             <el-select v-model="circulationInfo.achieveName" @change="setOrgCode(circulationInfo.achieveName)" style="width: 300px">
-              <el-option v-for="item in this.org.orgList" :label="item.name" :key="item.name" :value="item.name"></el-option>
+              <el-option v-for="item in this.orgList" :label="item.name" :key="item.name" :value="item.name"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="接收人员" prop="receiverName">
@@ -212,12 +212,7 @@ export default {
       roleList: [],
       roleFlag: false,
       operatorName: '',
-      org: {
-        orgName: '',
-        orgCode: '',
-        orgFlag: '',
-        orgList: []
-      },
+      orgList: [],
       prescriptionData: Object,
       loading: false,
       waiting: false,
@@ -238,29 +233,15 @@ export default {
     }
   },
   created () {
-    this.getUserOrg()
+    this.request.orgname = window.sessionStorage.getItem('orgName')
+    this.orgList = JSON.parse(window.sessionStorage.getItem('orgList'))
+    this.getPrescriptionList()
   },
   mounted () {
     this.getRoleList()
     this.getRealNameById()
   },
   methods: {
-    async getUserOrg () {
-      await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.org.orgName = result.data.data.name
-          this.org.orgCode = result.data.data.code
-          this.org.orgFlag = result.data.data.orgflag
-          this.org.orgList = result.data.data.subOrgList
-          this.request.orgname = result.data.data.name
-          return this.getPrescriptionList()
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        this.loading = false
-        return this.$message.error('获取数据失败')
-      })
-    },
     getPrescriptionList () {
       this.loading = true
       this.$axios.post('prescription/status/getPrescriptionList', this.request).then(result => {
@@ -319,11 +300,11 @@ export default {
       this.circulationInfo.pid = row.id
       this.circulationInfo.sender = window.sessionStorage.getItem('id')
       this.circulationInfo.senderName = this.operatorName
-      this.circulationInfo.originCode = this.org.orgCode
-      this.circulationInfo.originName = this.org.orgName
+      this.circulationInfo.originCode = window.sessionStorage.getItem('orgCode')
+      this.circulationInfo.originName = window.sessionStorage.getItem('orgName')
     },
     setOrgCode (name) {
-      this.org.orgList.forEach(async item => {
+      this.orgList.forEach(async item => {
         if (item.name === name) {
           this.circulationInfo.achieveCode = item.code
           await this.$axios.post('userinfo/getUserInfoByOrgCodeOrName', {'orgcode': this.circulationInfo.achieveCode}).then(result => {

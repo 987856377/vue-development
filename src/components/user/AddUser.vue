@@ -50,7 +50,7 @@
           </el-form-item>
           <el-form-item label="所属机构" prop="orgname">
             <el-select v-model="userInfo.orgname" @change="setOrgCode(userInfo.orgname)">
-              <el-option v-for="item in this.org.orgList" :label="item.name" :key="item.name" :value="item.name"></el-option>
+              <el-option v-for="item in this.orgList" :label="item.name" :key="item.name" :value="item.name"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="角色" prop="role">
@@ -95,12 +95,7 @@ export default {
         mail: '',
         role: ''
       },
-      org: {
-        orgName: '',
-        orgCode: '',
-        orgFlag: '',
-        orgList: []
-      },
+      orgList: [],
       roleList: [],
       loading: false,
       rules1: {
@@ -146,28 +141,14 @@ export default {
     }
   },
   created () {
-    this.getUserOrg()
+    this.orgList = JSON.parse(window.sessionStorage.getItem('orgList'))
   },
   mounted () {
     this.getRoleListAvalible()
   },
   methods: {
-    async getUserOrg () {
-      await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.org.orgName = result.data.data.name
-          this.org.orgCode = result.data.data.code
-          this.org.orgFlag = result.data.data.orgflag
-          this.org.orgList = result.data.data.subOrgList
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        this.loading = false
-        return this.$message.error('获取数据失败')
-      })
-    },
     setOrgCode (name) {
-      this.org.orgList.forEach(item => {
+      this.orgList.forEach(item => {
         if (item.name === name) {
           this.userInfo.orgcode = item.code
         }
