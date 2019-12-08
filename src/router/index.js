@@ -47,6 +47,10 @@ const router = new Router({
           component: () => import('@/components/power/PerssionList')
         },
         {
+          path: '/addPrescription',
+          component: () => import('@/components/prescription/AddPrescription')
+        },
+        {
           path: '/prescriptonList',
           component: () => import('@/components/prescription/PrescriptionList')
         },

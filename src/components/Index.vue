@@ -47,6 +47,7 @@
               <span slot="title">处方流转</span>
             </template>
             <el-menu-item-group>
+              <el-menu-item index="/addPrescription">处方录入</el-menu-item>
               <el-menu-item index="/prescriptonList">处方列表</el-menu-item>
               <el-menu-item index="/circulationInfo">流转详情</el-menu-item>
             </el-menu-item-group>

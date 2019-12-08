@@ -324,6 +324,10 @@ export default {
         if (!valid) {
           return
         }
+        let reg = /^[1][3,4,5,7,8][0-9]{9}$/
+        if (!reg.test(this.organization.phone)) {
+          return this.$notify({ type: 'error', message: '手机号格式错误' })
+        }
         this.loading = true
         await this.$axios.post('organization/saveOrUpdate', this.organization).then(result => {
           if (result.data.code !== 200) {
