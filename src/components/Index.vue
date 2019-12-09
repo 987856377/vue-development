@@ -5,6 +5,7 @@
         <img src="../assets/logo.png" alt=""/>
       </div>
       Electronic Prescription Platform
+      <h5 style="float: right">欢迎您, {{ user }}</h5>
       <el-button type="info" @click="logout" style="float: right">退出</el-button>
     </el-header>
     <el-container style="height: 100%;">
@@ -69,7 +70,7 @@
               <span slot="title">消息详情</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/sendMessage">发送</el-menu-item>
+              <el-menu-item index="/sendMessage">处方申请</el-menu-item>
               <el-menu-item index="/inBox">已发送</el-menu-item>
               <el-menu-item index="/outBox">已接收</el-menu-item>
               <el-menu-item index="/draftBox">草稿箱</el-menu-item>
@@ -105,7 +106,9 @@ export default {
     Home
   },
   data () {
-    return {}
+    return {
+      user: window.sessionStorage.getItem('name')
+    }
   },
   methods: {
     logout () {

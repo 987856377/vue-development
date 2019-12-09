@@ -145,22 +145,12 @@ export default {
     }
   },
   mounted () {
-    this.getEnterInfo()
+    this.prescriptionInfo.orgcode = window.sessionStorage.getItem('orgCode')
+    this.prescriptionInfo.orgname = window.sessionStorage.getItem('orgName')
+    this.prescriptionInfo.uid = window.sessionStorage.getItem('id')
+    this.prescriptionInfo.uname = window.sessionStorage.getItem('name')
   },
   methods: {
-    async getEnterInfo () {
-      await this.$axios.post('userinfo/getUserInfoById', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.prescriptionInfo.orgcode = result.data.data.orgcode
-          this.prescriptionInfo.orgname = result.data.data.orgname
-          this.prescriptionInfo.uid = result.data.data.id
-          this.prescriptionInfo.uname = result.data.data.name
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        return this.$notify({ type: 'error', message: '服务器内部错误, 获取用户信息失败' })
-      })
-    },
     handleClickSave () {
       this.$refs.addPrescriptionFormRef.validate(async valid => {
         if (!valid) {
