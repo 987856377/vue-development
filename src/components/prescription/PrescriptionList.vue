@@ -211,7 +211,6 @@ export default {
       receiverList: [],
       roleList: [],
       roleFlag: false,
-      operatorName: '',
       orgList: [],
       prescriptionData: Object,
       loading: false,
@@ -239,7 +238,6 @@ export default {
   },
   mounted () {
     this.getRoleList()
-    this.getRealNameById()
   },
   methods: {
     getPrescriptionList () {
@@ -277,16 +275,6 @@ export default {
         return this.$message.error('获取用户可操作角色数据失败')
       })
     },
-    async getRealNameById () {
-      await this.$axios.post('user/getRealNameById', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.operatorName = result.data.data
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        return this.$message.error('获取用户姓名失败')
-      })
-    },
     handleClickView (row) {
       this.dialogTableVisible = true
       this.prescriptionData = row
@@ -295,11 +283,14 @@ export default {
       this.dialogTableVisible = false
     },
     handleCirculateDialog (row) {
+      if (row.verify !== 1 || row.flag !== 1 || row.enable !== 1) {
+        return this.$notify({ type: 'error', message: '处方要流转必须要通过审核, 已启用, 且设置为可流转状态, 才可流转向其他机构' })
+      }
       this.dialogPrescriptionVisible = true
       this.prescriptionData = row
       this.circulationInfo.pid = row.id
       this.circulationInfo.sender = window.sessionStorage.getItem('id')
-      this.circulationInfo.senderName = this.operatorName
+      this.circulationInfo.senderName = window.sessionStorage.getItem('name')
       this.circulationInfo.originCode = window.sessionStorage.getItem('orgCode')
       this.circulationInfo.originName = window.sessionStorage.getItem('orgName')
     },
@@ -353,7 +344,7 @@ export default {
       }
       await this.$axios.post('prescription/status/verifyPrescription', {'pid': prescriptionData.id,
         'operator': window.sessionStorage.getItem('id'),
-        'operatorName': this.operatorName,
+        'operatorName': window.sessionStorage.getItem('name'),
         'verify': 1}).then(result => {
         if (result.data.code === 200) {
           this.getPrescriptionList()
@@ -376,7 +367,7 @@ export default {
         .then(async ({ value }) => {
           await this.$axios.post('prescription/status/verifyPrescription', {'pid': prescriptionData.id,
             'operator': window.sessionStorage.getItem('id'),
-            'operatorName': this.operatorName,
+            'operatorName': window.sessionStorage.getItem('name'),
             'verify': 0,
             'extra': value}).then(result => {
             if (result.data.code === 200) {

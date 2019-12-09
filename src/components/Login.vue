@@ -58,9 +58,10 @@ export default {
           }
           window.sessionStorage.setItem('Authorization', result.headers.authorization)
           window.sessionStorage.setItem('username', this.user.username)
-          await this.$axios.post('user/getIdByUsername', {'username': this.user.username}).then(async result1 => {
+          await this.$axios.post('userinfo/getUserInfoByUsername', {'username': this.user.username}).then(async result1 => {
             if (result1.data.code === 200) {
-              window.sessionStorage.setItem('id', result1.data.data)
+              window.sessionStorage.setItem('id', result1.data.data.id)
+              window.sessionStorage.setItem('name', result1.data.data.name)
               await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
                 if (result.data.code === 200) {
                   window.sessionStorage.setItem('orgCode', result.data.data.code)

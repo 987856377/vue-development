@@ -133,7 +133,6 @@ export default {
       roleFlag: false,
       circulation_info_id: '',
       acceptStatus: '',
-      operatorName: '',
       prescriptionData: Object,
       loading: false,
       waiting: false,
@@ -148,7 +147,6 @@ export default {
   },
   mounted () {
     this.getRoleList()
-    this.getRealNameById()
   },
   methods: {
     getCirculationInfoList () {
@@ -186,18 +184,8 @@ export default {
         return this.$message.error('获取用户可操作角色数据失败')
       })
     },
-    async getRealNameById () {
-      await this.$axios.post('user/getRealNameById', {'id': window.sessionStorage.getItem('id')}).then(result => {
-        if (result.data.code === 200) {
-          this.operatorName = result.data.data
-        }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        return this.$message.error('获取用户姓名失败')
-      })
-    },
     async handleClickView (row) {
-      if (this.operatorName !== row.receiverName) {
+      if (window.sessionStorage.getItem('name') !== row.receiverName) {
         return this.$notify({ type: 'error', message: '对不起, 您无权查看' })
       }
       this.dialogTableVisible = true
