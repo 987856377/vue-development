@@ -70,9 +70,9 @@
               <span slot="title">消息详情</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/sendMessage">处方申请</el-menu-item>
-              <el-menu-item index="/inBox">已发送</el-menu-item>
-              <el-menu-item index="/outBox">已接收</el-menu-item>
+              <el-menu-item index="/sendMessage">发送</el-menu-item>
+              <el-menu-item index="/inBox">收件箱</el-menu-item>
+              <el-menu-item index="/outBox">发件箱</el-menu-item>
               <el-menu-item index="/draftBox">草稿箱</el-menu-item>
             </el-menu-item-group>
           </el-submenu>

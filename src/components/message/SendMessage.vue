@@ -11,7 +11,7 @@
       <!-- 添加处方信息表单区域 -->
       <el-form ref="addMessageFormRef" :model="message" :rules="rules" :inline="true" label-width="90px" size="mini">
         <el-card>
-          <el-form-item label="申请机构" prop="acceptOrgName">
+          <el-form-item label="目标机构" prop="acceptOrgName">
             <el-input v-model="message.acceptOrgName" @blur="getOrgCodeAndUsersByName()" style="width: 300px"></el-input>
           </el-form-item>
           <el-form-item label="目标机构人员" prop="receiverName" label-width="150px">
@@ -22,7 +22,7 @@
         </el-card>
         <el-card>
           <el-col>
-            <el-form-item label="请求标题" prop="subject">
+            <el-form-item label="标题" prop="subject">
               <el-input v-model="message.subject" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" style="width: 400px"></el-input>
             </el-form-item>
           </el-col>
@@ -63,7 +63,7 @@ export default {
       loading: false,
       rules: {
         acceptOrgName: [
-          { required: true, message: '请输入申请机构', trigger: 'blur' },
+          { required: true, message: '请输入目标机构', trigger: 'blur' },
           { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
         ],
         receiverName: [
@@ -71,7 +71,7 @@ export default {
           { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
         ],
         subject: [
-          { required: true, message: '请输入请求标题', trigger: 'blur' },
+          { required: true, message: '请输入标题', trigger: 'blur' },
           { min: 2, max: 64, message: '长度在 2 到 64 个字符', trigger: 'blur' }
         ],
         content: [

@@ -11,7 +11,7 @@
       <!--      搜索与添加-->
       <el-table :data="roleList" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading">
-        <el-table-column label="角色ID" prop="id" align="center">
+        <el-table-column label="角色ID" prop="id" width="100" align="center">
         </el-table-column>
         <el-table-column label="角色标识" prop="title" align="center">
         </el-table-column>
