@@ -87,10 +87,6 @@ const router = new Router({
           component: () => import('@/components/message/DraftBox')
         },
         {
-          path: '/messageDetail',
-          component: () => import('@/components/message/MessageDetail')
-        },
-        {
           path: '/config',
           component: () => import('@/components/Config')
         }

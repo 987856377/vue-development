@@ -149,9 +149,9 @@ export default {
     this.getRoleList()
   },
   methods: {
-    getCirculationInfoList () {
+    async getCirculationInfoList () {
       this.loading = true
-      this.$axios.post('prescription/circulationinfo/getCirculationInfoList', this.request).then(result => {
+      await this.$axios.post('prescription/circulationinfo/getCirculationInfoList', this.request).then(result => {
         if (result.data.code === 200) {
           this.request.current = result.data.data.current
           this.request.size = result.data.data.size

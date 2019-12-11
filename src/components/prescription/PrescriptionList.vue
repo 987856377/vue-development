@@ -121,7 +121,7 @@
             <div style="position: absolute; margin-left: 280px; margin-top: 30px">适用年龄: {{prescriptionData.age}}</div>
             <div style="position: absolute; margin-left: 500px; margin-top: 30px">适用性别: {{prescriptionData.sex}}</div>
             <div style="position: absolute; margin-left: 20px; margin-top: 30px">开方日期: {{prescriptionData.date}}</div>
-            <div style="position: absolute; margin-left: 20px; margin-top: 60px">适用症状: {{prescriptionData.symptom}}</div>
+            <div style="position: absolute; margin-left: 20px; margin-top: 60px; color: red">适用症状: {{prescriptionData.symptom}}</div>
           </div>
           <div style="height: 400px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
             <div style="position: absolute; margin-left: 20px"><h2>Rp.</h2></div>
@@ -240,9 +240,9 @@ export default {
     this.getRoleList()
   },
   methods: {
-    getPrescriptionList () {
+    async getPrescriptionList () {
       this.loading = true
-      this.$axios.post('prescription/status/getPrescriptionList', this.request).then(result => {
+      await this.$axios.post('prescription/status/getPrescriptionList', this.request).then(result => {
         if (result.data.code === 200) {
           this.request.current = result.data.data.current
           this.request.size = result.data.data.size

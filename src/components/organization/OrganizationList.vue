@@ -247,12 +247,12 @@ export default {
     this.getOrgList()
   },
   methods: {
-    getOrgByName () {
+    async getOrgByName () {
       if (this.query === '') {
         return
       }
       this.loading = true
-      this.$axios.post('organization/getOrgByName', {'name': this.query}).then(result => {
+      await this.$axios.post('organization/getOrgByName', {'name': this.query}).then(result => {
         if (result.data.code === 200) {
           this.loading = false
           // eslint-disable-next-line no-return-assign
@@ -267,9 +267,9 @@ export default {
         return this.$message.error('获取数据失败')
       })
     },
-    getOrgList () {
+    async getOrgList () {
       this.loading = true
-      this.$axios.post('organization/getOrgList', this.page).then(result => {
+      await this.$axios.post('organization/getOrgList', this.page).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size

@@ -63,7 +63,7 @@ export default {
       loading: false,
       rules: {
         acceptOrgName: [
-          { required: true, message: '请输入目标机构', trigger: 'blur' },
+          { required: true, message: '请输入目标机构', trigger: 'change' },
           { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
         ],
         receiverName: [
@@ -89,6 +89,9 @@ export default {
   },
   methods: {
     async getOrgCodeAndUsersByName () {
+      if (this.message.acceptOrgName === '') {
+        return
+      }
       await this.$axios.post('organization/getOrgCodeAndUsersByName', { 'name': this.message.acceptOrgName }).then(result => {
         if (result.data.code === 200) {
           this.message.acceptOrgCode = result.data.data.code

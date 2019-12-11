@@ -229,12 +229,12 @@ export default {
     this.getRoleListAvalible()
   },
   methods: {
-    getUserInfo () {
+    async getUserInfo () {
       if (this.query === '') {
         return
       }
       this.loading = true
-      this.$axios.post('userinfo/getUserInfo', {'username': this.query}).then(result => {
+      await this.$axios.post('userinfo/getUserInfo', {'username': this.query}).then(result => {
         if (result.data.code === 200) {
           this.loading = false
           // eslint-disable-next-line no-return-assign
@@ -249,9 +249,9 @@ export default {
         return this.$message.error('获取数据失败')
       })
     },
-    getUserInfoList () {
+    async getUserInfoList () {
       this.loading = true
-      this.$axios.post('userinfo/getUserInfoPage', { page: this.page, 'orgflag': window.sessionStorage.getItem('orgFlag') }).then(result => {
+      await this.$axios.post('userinfo/getUserInfoPage', { page: this.page, 'orgflag': window.sessionStorage.getItem('orgFlag') }).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size
