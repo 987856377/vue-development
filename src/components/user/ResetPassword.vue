@@ -64,14 +64,15 @@ export default {
         }
         this.loading = true
         await this.$axios.post('user/resetPassword', { 'id': window.sessionStorage.getItem('id'), 'password': this.user.password }).then(result => {
-          if (result.data.code !== 200) {
+          if (result.data.code === 200) {
+            this.loading = false
+            window.sessionStorage.clear()
+            this.$router.push('/login')
+            return this.$message.success('密码重置成功')
+          } else {
             this.loading = false
             return this.$message.error('密码重置失败')
           }
-          this.loading = false
-          window.sessionStorage.clear()
-          this.$router.push('/login')
-          return this.$message.success('密码重置成功')
         }).catch(error => {
           this.loading = false
           return this.$message.error('密码重置失败: ' + error)

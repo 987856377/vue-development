@@ -166,7 +166,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     async getRoleList () {
@@ -181,7 +181,7 @@ export default {
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$message.error('获取用户可操作角色数据失败')
+        return this.$message.error('获取用户可操作角色数据失败: ' + error)
       })
     },
     async handleClickView (row) {
@@ -196,11 +196,11 @@ export default {
           // eslint-disable-next-line no-return-assign
           return this.prescriptionData = result.data.data
         } else {
-          return this.$notify({ type: 'error', message: '获取处方数据失败' })
+          return this.$notify({type: 'error', message: '获取处方数据失败: ' + result.data.message})
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$notify({ type: 'error', message: '获取处方数据失败' })
+        return this.$notify({type: 'error', message: '获取处方数据失败: ' + error})
       })
     },
     handleCloseView () {
@@ -221,18 +221,20 @@ export default {
           prescriptionData.origin = 9
           await this.$axios.post('prescription/detail/saveOrUpdate', prescriptionData).then(result => {
             if (result.data.code === 200) {
-              return this.$notify({ type: 'success', message: '处方已接收' })
+              return this.$notify({ type: 'success', message: '处方已保存' })
+            } else {
+              return this.$notify({ type: 'error', message: '处方未保存: ' + result.data.message })
             }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
-            return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+            return this.$notify({ type: 'error', message: '处方未保存: ' + error })
           })
         } else {
-          return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+          return this.$notify({ type: 'error', message: '处方未接收: ' + result.data.message })
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+        return this.$notify({ type: 'error', message: '操作未接收: ' + error })
       })
     },
     handleClickDeny (prescriptionData) {
@@ -251,14 +253,14 @@ export default {
               this.getCirculationInfoList()
               return this.$notify({ type: 'warning', message: '处方已拒绝' })
             } else {
-              return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+              return this.$notify({ type: 'error', message: '操作未完成: ' + result.data.message })
             }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
-            return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+            return this.$notify({ type: 'error', message: '操作未完成: ' + error })
           })
-        }).catch(() => {
-          this.$notify({ type: 'error', message: '取消输入' })
+        }).catch((error) => {
+          this.$notify({ type: 'error', message: '取消输入: ' + error })
         })
     },
     handleSizeChange (newSize) {

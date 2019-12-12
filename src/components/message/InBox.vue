@@ -159,7 +159,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     handleSizeChange (newSize) {
@@ -196,7 +196,7 @@ export default {
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$message.error('删除消息失败')
+        return this.$message.error('删除消息失败: ' + error)
       })
     },
     async getMessageDetail (row) {
@@ -237,12 +237,12 @@ export default {
             return this.$notify({ type: 'success', message: '发送成功' })
           } else {
             this.waiting = false
-            return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' })
+            return this.$notify({type: 'error', message: '申请发送失败: ' + result.data.message})
           }
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
           this.waiting = false
-          return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' })
+          return this.$notify({type: 'error', message: '申请发送失败: ' + error})
         })
       })
     },

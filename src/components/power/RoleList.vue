@@ -68,7 +68,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取用户可操作角色数据失败')
+        return this.$message.error('获取用户可操作角色数据失败: ' + error)
       })
     },
     handleClickChange (row) {
@@ -86,7 +86,7 @@ export default {
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
-            return this.$message({ type: 'error', message: '更新角色状态失败!' })
+            return this.$message({ type: 'error', message: '更新角色状态失败: ' + error })
           })
         }).catch(() => {
           this.loading = false

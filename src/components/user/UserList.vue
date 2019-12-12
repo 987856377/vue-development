@@ -241,12 +241,12 @@ export default {
           return this.tableData = new Array(result.data.data)
         } else {
           this.loading = false
-          return this.$message.error('获取数据失败')
+          return this.$message.error('获取数据失败: ' + result.data.message)
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     async getUserInfoList () {
@@ -266,7 +266,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     async getUserRoleList () {
@@ -279,7 +279,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.waiting = false
-        return this.$message.error('获取用户角色数据失败')
+        return this.$message.error('获取用户角色数据失败: ' + error)
       })
     },
     async getRoleListAvalible () {
@@ -289,7 +289,7 @@ export default {
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$message.error('获取用户可操作角色数据失败')
+        return this.$message.error('获取用户可操作角色数据失败: ' + error)
       })
     },
     handleClickChange (row) {
@@ -307,7 +307,7 @@ export default {
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
-            return this.$message({ type: 'error', message: '更新用户状态失败!' })
+            return this.$message({ type: 'error', message: '更新用户状态失败: ' + error })
           })
         }).catch(() => {
           this.loading = false
@@ -368,7 +368,7 @@ export default {
       }).catch(error => {
         this.role.destRole = ''
         this.waiting = false
-        return this.$message.error('删除用户角色失败')
+        return this.$message.error('删除用户角色失败: ' + error)
       })
     },
     handleCloseEdit () {
@@ -392,13 +392,13 @@ export default {
           } else {
             this.getUserInfoList()
             this.loading = false
-            return this.$message.error('更新失败: ' + result.data.data)
+            return this.$message.error('更新失败: ' + result.data.message)
           }
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
           this.getUserInfoList()
           this.loading = false
-          return this.$message.error('更新失败')
+          return this.$message.error('更新失败: ' + error)
         })
       })
     },

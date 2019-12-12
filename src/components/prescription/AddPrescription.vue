@@ -170,12 +170,12 @@ export default {
             return this.$notify({ type: 'success', message: '处方录入成功' })
           } else {
             this.loading = false
-            return this.$notify({ type: 'error', message: '服务器内部错误, 处方录入失败' })
+            return this.$notify({ type: 'error', message: '处方录入失败: ' + result.data.message })
           }
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
           this.loading = false
-          return this.$notify({ type: 'error', message: '服务器内部错误, 处方录入失败' })
+          return this.$notify({ type: 'error', message: '处方录入失败: ' + error })
         })
       })
     },

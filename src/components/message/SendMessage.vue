@@ -97,12 +97,12 @@ export default {
           this.message.acceptOrgCode = result.data.data.code
           this.receiverList = result.data.data.targetUserList
         } else {
-          return this.$notify({ type: 'error', message: '获取申请机构信息失败, 请确认输入的机构是有误!' })
+          return this.$notify({ type: 'error', message: '获取申请机构信息失败, 请确认输入的机构是有误!' + result.data.message })
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$notify({ type: 'error', message: '服务器内部错误' })
+        return this.$notify({type: 'error', message: '获取目标机构信息失败: ' + error})
       })
     },
     setReceiver (name) {
@@ -125,12 +125,12 @@ export default {
             return this.$notify({ type: 'success', message: '发送成功' })
           } else {
             this.loading = false
-            return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' })
+            return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' + result.data.message })
           }
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
           this.loading = false
-          return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' })
+          return this.$notify({ type: 'error', message: '申请发送失败: ' + error })
         })
       })
     },
@@ -148,12 +148,12 @@ export default {
             return this.$notify({ type: 'success', message: '发送成功' })
           } else {
             this.loading = false
-            return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' })
+            return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' + result.data.message })
           }
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
           this.loading = false
-          return this.$notify({ type: 'error', message: '服务器内部错误, 申请发送失败' })
+          return this.$notify({ type: 'error', message: '申请发送失败: ' + error })
         })
       })
     },

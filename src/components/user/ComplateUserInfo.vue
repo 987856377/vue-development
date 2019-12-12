@@ -123,7 +123,7 @@ export default {
           return this.usrData = result.data.data
         } else {
           this.loading = false
-          return this.$message.error('获取数据失败')
+          return this.$message.error('获取数据失败: ' + result.data.message)
         }
       }).catch(error => {
         this.loading = false
@@ -138,12 +138,13 @@ export default {
         this.loading = true
         this.usrData.id = window.sessionStorage.getItem('id')
         await this.$axios.post('userinfo/completeUserInfo', this.usrData).then(result => {
-          if (result.data.code !== 200) {
+          if (result.data.code === 200) {
             this.loading = false
-            return this.$message.error('更新失败')
+            return this.$message.success('更新成功')
+          } else {
+            this.loading = false
+            return this.$message.error('更新失败: ' + result.data.message)
           }
-          this.loading = false
-          return this.$message.success('更新成功')
         }).catch(error => {
           this.loading = false
           return this.$message.error('更新失败: ' + error)

@@ -125,11 +125,11 @@
           </div>
           <div style="height: 400px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
             <div style="position: absolute; margin-left: 20px"><h2>Rp.</h2></div>
-            <div style="height: 280px; width: 575px; margin-left: 30px; margin-top: 45px; border-style: solid; border-width: 1px">
-              <div style="position: absolute; margin-left: 200px; margin-top: 30px">{{prescriptionData.medicine}}</div>
+            <div style="height: 280px; width: 615px; margin-left: 30px; margin-top: 45px; border-style: solid; border-width: 1px">
+              <div style="position: absolute; width: 585px; margin-left: 15px; margin-top: 30px; text-align: left;">{{prescriptionData.medicine}}</div>
             </div>
-            <div style="position: absolute; margin-left: 40px; margin-top: 10px">医嘱: {{prescriptionData.advice}}</div>
-            <div style="position: absolute; margin-left: 500px; margin-top: 30px">Price: {{prescriptionData.price}}</div>
+            <div style="position: absolute; margin-left: 40px; margin-top: 10px; text-align: left;width: 625px">医嘱: {{prescriptionData.advice}}</div>
+            <div style="position: absolute; margin-left: 500px; margin-top: 55px">Price: {{prescriptionData.price}}</div>
           </div>
           <div style="height: 80px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
             <div style="position: absolute; margin-left: 20px">开方医生: {{prescriptionData.doctorName}}</div>
@@ -257,7 +257,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     async getRoleList () {
@@ -303,11 +303,11 @@ export default {
               this.receiverList = result.data.data
               this.circulationInfo.receiverName = ''
             } else {
-              return this.$notify({ type: 'error', message: '获取目标机构人员列表失败' })
+              return this.$notify({ type: 'error', message: '获取目标机构人员列表失败: ' + result.data.message })
             }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
-            return this.$notify({ type: 'error', message: '获取目标机构人员列表失败' })
+            return this.$notify({ type: 'error', message: '获取目标机构人员列表失败: ' + error })
           })
         }
       })
@@ -331,11 +331,11 @@ export default {
           this.dialogPrescriptionVisible = false
           return this.$notify({ type: 'success', message: '流转成功' })
         } else {
-          return this.$notify({ type: 'error', message: '流转失败,详情请咨询管理员' })
+          return this.$notify({ type: 'error', message: '流转失败: ' + result.data.message })
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$notify({ type: 'error', message: '流转失败,详情请咨询管理员' })
+        return this.$notify({ type: 'error', message: '流转失败: ' + error })
       })
     },
     async handleClickPass (prescriptionData) {
@@ -347,14 +347,15 @@ export default {
         'operatorName': window.sessionStorage.getItem('name'),
         'verify': 1}).then(result => {
         if (result.data.code === 200) {
+          this.dialogTableVisible = false
           this.getPrescriptionList()
           return this.$notify({ type: 'success', message: '处方已审核通过' })
         } else {
-          return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+          return this.$notify({type: 'error', message: '操作未完成: ' + result.data.message})
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+        return this.$notify({ type: 'error', message: '操作未完成: ' + error })
       })
     },
     handleClickUnPass (prescriptionData) {
@@ -371,14 +372,15 @@ export default {
             'verify': 0,
             'extra': value}).then(result => {
             if (result.data.code === 200) {
+              this.dialogTableVisible = false
               this.getPrescriptionList()
               return this.$notify({ type: 'warning', message: '处方未通过审核' })
             } else {
-              return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+              return this.$notify({ type: 'error', message: '操作未完成' + result.data.message })
             }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
-            return this.$notify({ type: 'error', message: '服务器内部错误, 操作未完成' })
+            return this.$notify({ type: 'error', message: '操作未完成: ' + error })
           })
         }).catch(() => {
           this.$notify({ type: 'error', message: '取消输入' })
@@ -401,12 +403,17 @@ export default {
             row.flag = 1
           }
           await this.$axios.post('prescription/status/stopCirculate', {'pid': row.id, 'flag': row.flag}).then(result => {
-            this.loading = false
-            return this.$message({ type: 'success', message: '更新处方状态成功!' })
+            if (result.data.code === 200) {
+              this.loading = false
+              return this.$message({ type: 'success', message: '更新处方状态成功!' })
+            } else {
+              this.loading = false
+              return this.$message({ type: 'error', message: '更新处方状态失败: ' + result.data.message })
+            }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
-            return this.$message({ type: 'error', message: '更新处方状态失败!' })
+            return this.$message({ type: 'error', message: '更新处方状态失败: ' + error })
           })
         }).catch(() => {
           this.loading = false
@@ -426,12 +433,17 @@ export default {
           if (row.enable === 1) row.enable = 0
           else if (row.enable === 0) row.enable = 1
           await this.$axios.post('prescription/status/enableCirculate', {'pid': row.id, 'enable': row.enable}).then(result => {
-            this.loading = false
-            return this.$message({ type: 'success', message: '更新处方流转状态成功!' })
+            if (result.data.code === 200) {
+              this.loading = false
+              return this.$message({ type: 'success', message: '更新处方流转状态成功!' })
+            } else {
+              this.loading = false
+              return this.$message({ type: 'error', message: '更新处方流转状态失败: ' + result.data.message })
+            }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
-            return this.$message({ type: 'error', message: '更新处方流转状态失败!' })
+            return this.$message({ type: 'error', message: '更新处方流转状态失败: ' + error })
           })
         }).catch(() => {
           this.loading = false

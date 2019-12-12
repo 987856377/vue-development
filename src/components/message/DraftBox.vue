@@ -21,7 +21,7 @@
       <!--      表单-->
       <el-table :data="tableData" ref="multipleTable" tooltip-effect="dark" style="width: 100%" max-height="520"
                 stripe v-loading.lock="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
-                @selection-change="handleSelectionChange">
+                @selection-change="handleSelectionChange" @row-dblclick="getMessageDetail">
         <el-table-column type="selection" width="55">
         </el-table-column>
         <el-table-column prop="acceptOrgName" label="收件机构" width="120" align="center">
@@ -45,6 +45,21 @@
         layout="total, sizes, prev, pager, next, jumper"
         :total="total">
       </el-pagination>
+      <!--      消息详情对话框-->
+      <el-dialog :visible.sync="messageTableVisible">
+        <div style="border-style: solid; border-width: 1px; height: 600px;">
+          <div>
+            <h4 style="position: absolute; margin-left: 25px; margin-top: 15px;">{{messageData.sendTime}}</h4>
+            <h4 style="position: absolute; margin-left: 25px; margin-top: 35px;">{{messageData.sendOrgName}}, {{messageData.senderName}}</h4>
+            <h2  style="position: absolute; margin-left: 50%; transform: translate(-50%, -50%); margin-top: 65px;">{{messageData.subject}}</h2>
+          </div>
+          <div style="height: 500px; width: 675px; margin-left: 20px; margin-top: 100px;">
+            <div style="height: 450px; width: 625px; margin-left: 20px; margin-top: 15px; text-align: left">
+              <h3>{{messageData.content}}</h3>
+            </div>
+          </div>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -64,6 +79,8 @@ export default {
       },
       loading: false,
       total: 0,
+      messageTableVisible: false,
+      messageData: Object,
       multipleSelection: [],
       ids: [],
       tableData: []
@@ -92,7 +109,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     handleSizeChange (newSize) {
@@ -128,8 +145,21 @@ export default {
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$message.error('删除消息失败')
+        return this.$message.error('删除消息失败: ' + error)
       })
+    },
+    async getMessageDetail (row) {
+      this.messageTableVisible = true
+      if (row.readFlag === 0) {
+        this.request.id = row.id
+        this.request.readFlag = 1
+        await this.$axios.post('message/isRead', this.request).then(result => {
+          if (result.data.code === 200) {
+            row.readFlag = 1
+          }
+        })
+      }
+      this.messageData = row
     }
   }
 }

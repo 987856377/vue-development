@@ -332,7 +332,7 @@ export default {
         await this.$axios.post('organization/saveOrUpdate', this.organization).then(result => {
           if (result.data.code !== 200) {
             this.loading = false
-            return this.$message.error('机构入驻失败: ' + result.data.data)
+            return this.$message.error('机构入驻失败: ' + result.data.message)
           }
           this.loading = false
           this.$router.push('/orgList')

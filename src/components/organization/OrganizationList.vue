@@ -264,7 +264,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     async getOrgList () {
@@ -284,7 +284,7 @@ export default {
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
         this.loading = false
-        return this.$message.error('获取数据失败')
+        return this.$message.error('获取数据失败: ' + error)
       })
     },
     handleClickChange (row) {
@@ -304,7 +304,7 @@ export default {
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
-            return this.$message({ type: 'error', message: '更新机构状态失败!' })
+            return this.$message({type: 'error', message: '更新机构状态失败: ' + error})
           })
         }).catch(() => {
           this.loading = false
@@ -336,13 +336,13 @@ export default {
           } else {
             this.getOrgList()
             this.loading = false
-            return this.$message.error('更新失败: ' + result.data.data)
+            return this.$message.error('更新失败: ' + result.data.message)
           }
           // eslint-disable-next-line handle-callback-err
         }).catch(error => {
           this.getOrgList()
           this.loading = false
-          return this.$message.error('更新失败')
+          return this.$message.error('更新失败: ' + error)
         })
       })
     },
