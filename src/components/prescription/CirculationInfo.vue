@@ -8,22 +8,6 @@
     </el-breadcrumb>
     <!--    卡片视图-->
     <el-card>
-      <!--      搜索与添加-->
-      <el-row :gutter="20">
-        <el-col :span="3">
-          <el-input placeholder="处方号" v-model="request.id" clearable @clear="getCirculationInfoList">
-          </el-input>
-        </el-col>
-        <el-col :span="5">
-          <el-input placeholder="归属科室" v-model="request.department" clearable @clear="getCirculationInfoList">
-          </el-input>
-        </el-col>
-        <el-col :span="7">
-          <el-input placeholder="适用症" v-model="request.symptom" clearable @clear="getCirculationInfoList">
-          </el-input>
-        </el-col>
-        <el-col :span="4"><el-button icon="el-icon-search" @click="getCirculationInfoList">检索</el-button></el-col>
-      </el-row>
       <!--      表单-->
       <el-table :data="tableData" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading">

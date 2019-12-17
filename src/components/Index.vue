@@ -9,82 +9,29 @@
       <el-button type="info" @click="logout" style="float: right">退出</el-button>
     </el-header>
     <el-container style="height: 100%;">
-      <el-aside width="200px">
-        <el-menu class="el-menu-vertical-demo" :router="true" unique-opened>
+      <el-aside :width="isCollapse ? '64px' : '200px'">
+        <div class="toggle-button" @click="toggleCollapse">|||</div>
+        <el-menu class="el-menu-vertical-demo" :router="true" unique-opened :collapse="isCollapse"
+                 :collapse-transition="false" :default-active="$route.path">
           <el-menu-item index="/home">首页</el-menu-item>
-          <el-submenu index="1">
+          <!--一级菜单-->
+          <el-submenu :index="item.id + ''" v-for="item in roleModule" :key="item.id">
+          <!--一级菜单模板区域-->
             <template slot="title">
-              <i class="el-icon-location"></i>
-              <span slot="title">机构管理</span>
+              <!--图标-->
+              <i :class="iconsObj[item.id]"></i>
+              <!--文本-->
+              <span>{{item.title}}</span>
             </template>
-            <el-menu-item-group>
-              <el-menu-item index="/addOrg">机构入驻</el-menu-item>
-              <el-menu-item index="/orgList">机构列表</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-service"></i>
-              <span slot="title">人员维护</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="/addUser">添加用户</el-menu-item>
-              <el-menu-item index="/userList">用户列表</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title">
-              <i class="el-icon-tickets"></i>
-              <span slot="title">权限控制</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="/roleListInfo">角色列表</el-menu-item>
-              <el-menu-item index="/perssionList">权限列表</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="4">
-            <template slot="title">
-              <i class="el-icon-refresh"></i>
-              <span slot="title">处方流转</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="/addPrescription">处方录入</el-menu-item>
-              <el-menu-item index="/prescriptonList">处方列表</el-menu-item>
-              <el-menu-item index="/circulationInfo">流转详情</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="5">
-            <template slot="title">
-              <i class="el-icon-date"></i>
-              <span slot="title">数据统计</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="/organizationCount">机构统计</el-menu-item>
-              <el-menu-item index="/userCount">人员统计</el-menu-item>
-              <el-menu-item index="/prescriptionCount">处方统计</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="6">
-            <template slot="title">
-              <i class="el-icon-time"></i>
-              <span slot="title">消息详情</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="/sendMessage">发送</el-menu-item>
-              <el-menu-item index="/inBox">收件箱</el-menu-item>
-              <el-menu-item index="/outBox">发件箱</el-menu-item>
-              <el-menu-item index="/draftBox">草稿箱</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="7">
-            <template slot="title">
-              <i class="el-icon-setting"></i>
-              <span slot="title">个人设置</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="/complateUserInfo">完善资料</el-menu-item>
-              <el-menu-item index="/resetPassword">修改密码</el-menu-item>
-            </el-menu-item-group>
+            <!--二级菜单-->
+            <el-menu-item :index="subItem.url" v-for="subItem in item.subModule" :key="subItem.id">
+              <template slot="title">
+                <!--图标-->
+                <i class="el-icon-d-arrow-right"></i>
+                <!--文本-->
+                <span>{{subItem.title}}</span>
+              </template>
+            </el-menu-item>
           </el-submenu>
         </el-menu>
       </el-aside>
@@ -107,13 +54,60 @@ export default {
   },
   data () {
     return {
+      roleList: [],
+      roleModule: [],
+      iconsObj: {
+        '1': 'el-icon-menu',
+        '2': 'el-icon-location',
+        '3': 'el-icon-service',
+        '4': 'el-icon-tickets',
+        '5': 'el-icon-refresh',
+        '6': 'el-icon-date',
+        '7': 'el-icon-time',
+        '8': 'el-icon-setting'
+      },
+      isCollapse: false,
       user: window.sessionStorage.getItem('name')
     }
   },
+  created () {
+    this.getUserRoleList()
+  },
   methods: {
+    async getUserRoleList () {
+      this.waiting = true
+      await this.$axios.post('userrole/getRoleList', {'uid': window.sessionStorage.getItem('id')}).then(result => {
+        if (result.data.code === 200) {
+          result.data.data.forEach(item => {
+            this.roleList.push(item.code)
+          })
+          this.getRoleModule()
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$message.error('获取用户角色数据失败: ' + error)
+      })
+    },
+    async getRoleModule () {
+      await this.$axios.post('permission/role-module/getModulesByRoles', {
+        'userRoles': this.roleList
+      }).then(result => {
+        if (result.data.code === 200) {
+          this.roleModule = result.data.data
+        } else {
+          return this.$message.error('获取数据失败: ' + result.data.message)
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$message.error('获取用户可操作角色数据失败: ' + error)
+      })
+    },
     logout () {
       window.sessionStorage.clear()
       this.$router.push('/login')
+    },
+    toggleCollapse () {
+      this.isCollapse = !this.isCollapse
     }
   }
 }
@@ -122,6 +116,7 @@ export default {
 <style>
   .home-container {
     height: 100%;
+    background-color: ghostwhite;
   }
 
   .el-header {
@@ -171,5 +166,13 @@ export default {
   .el-container:nth-child(7) .el-aside {
     line-height: 320px;
   }
-
+  .toggle-button {
+    background-color: #F0F8FF;
+    font-size: 10px;
+    line-height: 24px;
+    color: black;
+    text-align: center;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+  }
 </style>

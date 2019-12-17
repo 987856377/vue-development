@@ -8,10 +8,10 @@
     </el-breadcrumb>
     <!--    卡片视图-->
     <el-card>
-      <el-select v-model="roleData" @change="handleSelectedChange" style="margin-right: 600px">
+      <el-select v-model="roleData" @change="handleSelectedChange">
         <el-option v-for="item in roleList" :key="item.code" :value="item.code" :label="item.title"></el-option>
       </el-select>
-      <el-transfer></el-transfer>
+      <el-transfer v-model="value1" :data="data"></el-transfer>
     </el-card>
   </div>
 </template>
@@ -19,9 +19,22 @@
 <script>
 export default {
   data () {
+    const generateData = _ => {
+      const data = []
+      for (let i = 1; i <= 15; i++) {
+        data.push({
+          key: i,
+          label: `${i}`,
+          disabled: i % 4 === 0
+        })
+      }
+      return data
+    }
     return {
       roleData: '',
-      roleList: []
+      roleList: [],
+      data: generateData(),
+      value1: [1, 4]
     }
   },
   created () {

@@ -11,7 +11,7 @@
       <!--      搜索与添加-->
       <el-row :gutter="20">
         <el-col :span="3">
-          <el-input placeholder="处方号" v-model="request.id" clearable @clear="getPrescriptionList">
+          <el-input placeholder="处方编号" v-model="request.id" clearable @clear="getPrescriptionList">
           </el-input>
         </el-col>
         <el-col :span="5">
