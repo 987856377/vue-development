@@ -27,7 +27,7 @@
             <el-menu-item :index="subItem.url" v-for="subItem in item.subModule" :key="subItem.id">
               <template slot="title">
                 <!--图标-->
-                <i class="el-icon-d-arrow-right"></i>
+                <i class="el-icon-caret-right"></i>
                 <!--文本-->
                 <span>{{subItem.title}}</span>
               </template>
