@@ -75,7 +75,6 @@ export default {
   },
   methods: {
     async getUserRoleList () {
-      this.waiting = true
       await this.$axios.post('userrole/getRoleList', {'uid': window.sessionStorage.getItem('id')}).then(result => {
         if (result.data.code === 200) {
           result.data.data.forEach(item => {

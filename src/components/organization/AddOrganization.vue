@@ -19,7 +19,7 @@
               <el-form-item label="机构名称" prop="name">
                 <el-input v-model="organization.name"></el-input>
               </el-form-item>
-              <el-form-item label="手机" prop="phone">
+              <el-form-item label="联系电话" prop="phone">
                 <el-input v-model="organization.phone"></el-input>
               </el-form-item>
               <el-form-item label="邮箱" prop="mail">
@@ -71,6 +71,9 @@
               <el-form-item label="地址" prop="address">
                 <el-input v-model="organization.address" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" style="width: 400px"></el-input>
               </el-form-item>
+              <el-form-item label="简介" prop="introduction">
+                <el-input v-model="organization.introduction" type="textarea" :autosize="{ minRows: 2, maxRows: 4}" style="width: 400px"></el-input>
+              </el-form-item>
             </el-col>
           </el-row>
           <el-row>
@@ -107,6 +110,7 @@ export default {
         officer: '',
         web: '',
         supervising: '',
+        introduction: '',
         flag: 9
       },
       loading: false,
@@ -293,7 +297,7 @@ export default {
         ],
         phone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
-          { min: 11, max: 11, message: '长度为 11 个字符', trigger: 'blur' }
+          { min: 8, max: 32, message: '长度为 11 个字符', trigger: 'blur' }
         ],
         mail: [
           { required: true, message: '请输入机构邮箱', trigger: 'blur' },
@@ -313,7 +317,7 @@ export default {
         ],
         supervising: [
           { required: true, message: '请输入上级机构, 没有上级机构填写机构名称', trigger: 'blur' },
-          { min: 6, max: 16, message: '长度为 6 到 16 个字符', trigger: 'blur' }
+          { min: 6, max: 32, message: '长度为 6 到 16 个字符', trigger: 'blur' }
         ]
       }
     }
