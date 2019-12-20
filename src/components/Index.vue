@@ -21,15 +21,15 @@
               <!--图标-->
               <i :class="iconsObj[item.id]"></i>
               <!--文本-->
-              <span>{{item.title}}</span>
+              <span>{{item.label}}</span>
             </template>
             <!--二级菜单-->
-            <el-menu-item :index="subItem.url" v-for="subItem in item.subModule" :key="subItem.id">
+            <el-menu-item :index="children.url" v-for="children in item.children" :key="children.id">
               <template slot="title">
                 <!--图标-->
                 <i class="el-icon-caret-right"></i>
                 <!--文本-->
-                <span>{{subItem.title}}</span>
+                <span>{{children.label}}</span>
               </template>
             </el-menu-item>
           </el-submenu>
