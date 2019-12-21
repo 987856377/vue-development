@@ -40,11 +40,11 @@ const router = new Router({
         },
         {
           path: '/roleListInfo',
-          component: () => import('@/components/power/RoleList')
+          component: () => import('@/components/permission/RoleList')
         },
         {
           path: '/perssionList',
-          component: () => import('@/components/power/PerssionList')
+          component: () => import('@/components/permission/PerssionList')
         },
         {
           path: '/addPrescription',
