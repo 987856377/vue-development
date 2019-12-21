@@ -80,7 +80,7 @@
         :total="total">
       </el-pagination>
       <!--      编辑对话框-->
-      <el-dialog title="编辑" :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <el-dialog title="编辑" :visible.sync="dialogTableVisible" width="500px" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
 
         <el-form ref="usrFormRef" :model="usrData" :rules="rules" label-width="100px" size="mini">
           <el-form-item label="用户名" prop="username">
@@ -90,7 +90,7 @@
             <el-input v-model="usrData.name"></el-input>
           </el-form-item>
           <el-form-item label="性别"  prop="sex">
-            <el-select v-model="usrData.sex" style="width: 615px">
+            <el-select v-model="usrData.sex" style="width: 360px">
               <el-option value="男" key="男"></el-option>
               <el-option value="女" key="女"></el-option>
               <el-option value="不详" key="不详"></el-option>

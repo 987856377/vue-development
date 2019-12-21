@@ -74,6 +74,7 @@ export default {
       }).then(result => {
         if (result.data.code === 200) {
           this.toData = result.data.data
+          this.afterData = result.data.data
         } else {
           return this.$message.error('获取数据失败: ' + result.data.message)
         }
@@ -89,6 +90,7 @@ export default {
       }).then(result => {
         if (result.data.code === 200) {
           this.fromData = result.data.data
+          this.beforeData = result.data.data
         } else {
           return this.$message.error('获取数据失败: ' + result.data.message)
         }
@@ -98,6 +100,8 @@ export default {
       })
     },
     handleSelected (roleData) {
+      this.addData = []
+      this.delData = []
       this.getToData()
       this.getFromData()
       this.roleList.forEach(item => {
@@ -118,35 +122,67 @@ export default {
     add (fromData, toData, obj) {
       // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的        {keys,nodes,halfKeys,halfNodes}对象
       // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-      console.log('fromData:', fromData)
-      console.log('toData:', toData)
-      console.log('obj:', obj)
+      // console.log('fromData:', fromData)
+      // console.log('toData:', toData)
+      // console.log('obj:', obj)
       obj.keys.forEach(item => {
         this.addData.push(item)
       })
-      obj.keys.forEach(item => {
-        // eslint-disable-next-line no-return-assign
-        this.delData.splice(obj.keys.findIndex(v => v === item), 1)
+      obj.harfKeys.forEach(item => {
+        this.addData.push(item)
       })
     },
     // 监听穿梭框组件移除
     remove (fromData, toData, obj) {
       // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
       // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
-      console.log('fromData:', fromData)
-      console.log('toData:', toData)
-      console.log('obj:', obj)
+      // console.log('fromData:', fromData)
+      // console.log('toData:', toData)
+      // console.log('obj:', obj)
       obj.keys.forEach(item => {
         this.delData.push(item)
       })
-      obj.keys.forEach(item => {
-        // eslint-disable-next-line no-return-assign
-        this.addData.splice(obj.keys.findIndex(v => v === item), 1)
+      obj.harfKeys.forEach(item => {
+        this.delData.push(item)
       })
     },
-    handleClickSave () {
-      console.log(this.addData)
-      console.log(this.delData)
+    async handleClickSave () {
+      let addTemp = this.addData
+      let delTemp = this.delData
+      // js中删除两个数组中相同的id
+      this.delData = this.delData.filter(item => {
+        return !addTemp.includes(item)
+      })
+      this.addData = this.addData.filter(item => {
+        return !delTemp.includes(item)
+      })
+      if (this.addData.length === 0 && this.delData.length === 0) {
+        return
+      }
+      if (this.addData.length !== 0) {
+        this.request.midList = this.addData
+        await this.$axios.post('permission/role-module/addModulesByRole',
+          {'rid': this.request.rid, 'midList': this.request.midList}
+        ).then(result => {
+          if (result.data.code === 200) {
+            return this.$message.success('添加角色菜单成功')
+          } else {
+            return this.$message.error('添加角色菜单失败: ' + result.data.message)
+          }
+        })
+      }
+      if (this.delData.length !== 0) {
+        this.request.midList = this.delData
+        await this.$axios.post('permission/role-module/delModulesByRole',
+          {'rid': this.request.rid, 'midList': this.request.midList}
+        ).then(result => {
+          if (result.data.code === 200) {
+            return this.$message.success('删除角色菜单成功')
+          } else {
+            return this.$message.error('删除角色菜单失败: ' + result.data.message)
+          }
+        })
+      }
     },
     handleClickReset () {
       this.handleSelected(this.roleData)

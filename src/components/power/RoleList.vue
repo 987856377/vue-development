@@ -8,6 +8,7 @@
     </el-breadcrumb>
     <!--    卡片视图-->
     <el-card>
+      <el-button type="warning" round @click="handleClickAdd" style="margin-left: 75%" size="mini">添加角色</el-button>
       <!--      搜索与添加-->
       <el-table :data="roleList" style="width: 100%" max-height="520" stripe border v-loading.lock="loading" element-loading-text="拼命加载中"
                 element-loading-spinner="el-icon-loading">
@@ -36,6 +37,25 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-dialog title="用户角色" :visible.sync="dialogTableVisible" width="400px" center :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <el-form ref="roleFormRef" :model="role" :rules="rules" label-width="100px" size="mini">
+          <el-form-item label="标签" prop="title">
+            <el-input v-model="role.title"></el-input>
+          </el-form-item>
+          <el-form-item label="代码" prop="code">
+            <el-input v-model="role.code"></el-input>
+          </el-form-item>
+          <el-row>
+            <el-form-item label="是否启用" prop="flag" align="center">
+              <el-switch v-model="role.flag" active-color="#13ce66" active-value="1" inactive-value="0"></el-switch>
+            </el-form-item>
+          </el-row>
+        </el-form>
+        <div slot="footer" class="dialog-footer" align="center">
+          <el-button @click="handleClose">取 消</el-button>
+          <el-button type="primary" @click="handleClickSave(role)">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -47,7 +67,23 @@ export default {
     return {
       roleList: [],
       flag: '',
-      loading: false
+      role: {
+        title: '',
+        code: '',
+        flag: ''
+      },
+      dialogTableVisible: false,
+      loading: false,
+      rules: {
+        title: [
+          { required: true, message: '请输入用户名称', trigger: 'blur' },
+          { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入用户名称', trigger: 'blur' },
+          { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
@@ -92,6 +128,27 @@ export default {
           this.loading = false
           this.$message({ type: 'info', message: '已取消操作' })
         })
+    },
+    handleClickAdd () {
+      this.dialogTableVisible = true
+    },
+    handleClose () {
+      this.dialogTableVisible = false
+      this.$refs.roleFormRef.resetFields()
+    },
+    async handleClickSave (role) {
+      await this.$axios.post('role/saveOrUpdate', this.role).then(result => {
+        if (result.data.code === 200) {
+          this.dialogTableVisible = false
+          this.getRoleListAvalible()
+          return this.$message({ type: 'success', message: '添加角色成功!' })
+        } else {
+          // eslint-disable-next-line standard/object-curly-even-spacing
+          return this.$message({ type: 'error', message: '添加角色失败: ' + result.data.message})
+        }
+      }).catch(error => {
+        return this.$message({ type: 'error', message: '添加角色失败: ' + error })
+      })
     }
   }
 }
