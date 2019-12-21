@@ -5,7 +5,7 @@
         <img src="../assets/logo.png" alt=""/>
       </div>
       <!-- 登录表单区域 -->
-      <el-form ref="loginFormRef" label-width="0px" :model="user" :rules="rules" class="form-login">
+      <el-form ref="loginFormRef" label-width="0px" :model="user" :rules="rules" class="form-login" DefaultButton >
         <!-- 用户名 -->
         <el-form-item prop="username">
           <el-input v-model="user.username" prefix-icon="el-icon-view"></el-input>
@@ -16,7 +16,7 @@
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
-          <el-button type="primary" @click='login' v-loading.fullscreen.lock="loading">登录</el-button>
+          <el-button id="btnLogin" type="primary" @click='login' v-loading.fullscreen.lock="loading">登录</el-button>
           <el-button type="info" @click='reset'>重置</el-button>
         </el-form-item>
       </el-form>
@@ -40,6 +40,15 @@ export default {
         password: [{ required: true, message: '请输入密码', trigger: 'blur' },
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
         ]
+      }
+    }
+  },
+  created () {
+    let _self = this
+    document.onkeydown = function (e) {
+      let key = window.event.keyCode
+      if (key === 13 || key === 100) {
+        _self.login('loginFormRef')
       }
     }
   },
