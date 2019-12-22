@@ -1,12 +1,24 @@
 <template>
   <el-container class='home-container'>
     <el-header>
-      <div>
-        <img src="../assets/logo.png" alt=""/>
-      </div>
-      Electronic Prescription Platform
-      <h5 style="float: right">欢迎您, {{ user }}</h5>
-      <el-button type="info" @click="logout" style="float: right">退出</el-button>
+      <h2 style="margin-left: 40%; text-align: center">Electronic Prescription Platform</h2>
+      <el-dropdown trigger="click">
+        <div style="width: 50px; height: 50px; float:left; border-radius: 50%; border: 3px solid; overflow: hidden;">
+          <img src="../assets/NIL.png" style="width: 52px; height: 52px; align-self: center"/>
+          <i class="el-icon-arrow-down el-icon--right"></i>
+        </div>
+        <el-dropdown-menu slot="dropdown" style="text-align: center">
+          <router-link to="/complateUserInfo" style="text-decoration: none;">
+            <el-dropdown-item>个人中心</el-dropdown-item>
+          </router-link>
+          <el-dropdown-item>更换头像</el-dropdown-item>
+          <router-link to="/resetPassword" style="text-decoration: none;">
+            <el-dropdown-item>修改密码</el-dropdown-item>
+          </router-link>
+          <el-dropdown-item @click.native="logout" divided>退出登录</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+
     </el-header>
     <el-container style="height: 100%;">
       <el-aside :width="isCollapse ? '64px' : '200px'">
@@ -27,7 +39,7 @@
             <el-menu-item :index="children.url" v-for="children in item.children" :key="children.id">
               <template slot="title">
                 <!--图标-->
-                <i class="el-icon-caret-right"></i>
+<!--                <i class="el-icon-caret-right"></i>-->
                 <!--文本-->
                 <span>{{children.label}}</span>
               </template>

@@ -78,7 +78,7 @@
           </el-row>
           <el-row>
             <el-form-item label="是否启用" prop="flag">
-              <el-switch v-model="organization.flag" active-color="#13ce66" active-value="1" inactive-value="9"></el-switch>
+              <el-switch v-model="organization.flag" active-color="#13ce66" inactive-color="#ff4949" active-value="1" inactive-value="9"></el-switch>
             </el-form-item>
           </el-row>
         </el-card>
@@ -328,9 +328,9 @@ export default {
         if (!valid) {
           return
         }
-        let reg = /^[1][3,4,5,7,8][0-9]{9}$/
+        let reg = /^((0\d{2,3}-\d{7,8})|(1[34578]\d{9}))$/
         if (!reg.test(this.organization.phone)) {
-          return this.$notify({ type: 'error', message: '手机号格式错误' })
+          return this.$notify({ type: 'error', message: '号码格式错误' })
         }
         this.loading = true
         await this.$axios.post('organization/saveOrUpdate', this.organization).then(result => {

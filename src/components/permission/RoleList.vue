@@ -47,7 +47,7 @@
           </el-form-item>
           <el-row>
             <el-form-item label="是否启用" prop="flag" align="center">
-              <el-switch v-model="role.flag" active-color="#13ce66" active-value="1" inactive-value="0"></el-switch>
+              <el-switch v-model="role.flag" active-color="#13ce66" inactive-color="#ff4949" active-value="1" inactive-value="0"></el-switch>
             </el-form-item>
           </el-row>
         </el-form>

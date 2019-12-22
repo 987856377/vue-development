@@ -13,13 +13,18 @@
         <el-card>
           <el-row :gutter="20">
             <el-col>
-              <el-form-item label="请输入密码" prop="password" label-width="200px">
-                <el-input v-model="user.password"></el-input>
+              <el-form-item label="旧密码" prop="raw" label-width="200px">
+                <el-input v-model="user.raw"></el-input>
               </el-form-item>
             </el-col>
             <el-col>
-              <el-form-item label="请再次输入密码" prop="check" label-width="200px">
-                <el-input v-model="user.check"></el-input>
+              <el-form-item label="新密码" prop="password" label-width="200px">
+                <el-input v-model="user.password" type="password"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col>
+              <el-form-item label="确认密码" prop="check" label-width="200px">
+                <el-input v-model="user.check" type="password"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -37,11 +42,16 @@ export default {
   data () {
     return {
       user: {
+        raw: '',
         password: '',
         check: ''
       },
       loading: false,
       rules: {
+        raw: [
+          { required: true, message: '请输入旧密码', trigger: 'blur' },
+          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+        ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
@@ -63,12 +73,15 @@ export default {
           return this.$message.error('两次输入的密码不一致, 请确认输入')
         }
         this.loading = true
-        await this.$axios.post('user/resetPassword', { 'id': window.sessionStorage.getItem('id'), 'password': this.user.password }).then(result => {
+        await this.$axios.post('user/resetPassword', { 'id': window.sessionStorage.getItem('id'), 'raw': this.user.raw, 'password': this.user.password }).then(result => {
           if (result.data.code === 200) {
             this.loading = false
             window.sessionStorage.clear()
             this.$router.push('/login')
             return this.$message.success('密码重置成功')
+          } else if (result.data.code === 409) {
+            this.loading = false
+            return this.$message.error('密码验证失败')
           } else {
             this.loading = false
             return this.$message.error('密码重置失败')

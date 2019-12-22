@@ -17,12 +17,14 @@
                 <el-input v-model="usrData.name"></el-input>
               </el-form-item>
               <el-form-item label="性别"  prop="sex">
-                <el-select v-model="usrData.sex">
+                <el-select v-model="usrData.sex" style="width: 185px">
                   <el-option value="男" key="男"></el-option>
                   <el-option value="女" key="女"></el-option>
                   <el-option value="不详" key="不详"></el-option>
                 </el-select>
               </el-form-item>
+            </el-col>
+              <el-col>
               <el-form-item label="年龄" prop="age">
                 <el-input v-model="usrData.age"></el-input>
               </el-form-item>
@@ -37,6 +39,8 @@
               <el-form-item label="邮箱" prop="mail">
                 <el-input v-model="usrData.mail"></el-input>
               </el-form-item>
+            </el-col>
+              <el-col>
               <el-form-item label="身份证" prop="identity">
                 <el-input v-model="usrData.identity"></el-input>
               </el-form-item>
