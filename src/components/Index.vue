@@ -4,22 +4,34 @@
       <h2 style="margin-left: 40%; text-align: center">Electronic Prescription Platform</h2>
       <el-dropdown trigger="click">
         <div style="width: 50px; height: 50px; float:left; border-radius: 50%; border: 3px snow solid; overflow: hidden;">
-<!--          <img :src="header + headerName" slot="reference" style="width: 52px; height: 52px; align-self: center"/>-->
-          <img src="http://127.0.0.1:8090/img/admin.png" slot="reference" style="width: 52px; height: 52px; align-self: center"/>
+          <img ref="img" src="../assets/NIL.png" slot="reference" style="width: 52px; height: 52px; align-self: center"/>
           <i class="el-icon-arrow-down el-icon--right"></i>
         </div>
         <el-dropdown-menu slot="dropdown" style="text-align: center">
+          {{user}}
           <router-link to="/complateUserInfo" style="text-decoration: none;">
-            <el-dropdown-item>个人中心</el-dropdown-item>
+            <el-dropdown-item divided>个人中心</el-dropdown-item>
           </router-link>
-          <el-dropdown-item>更换头像</el-dropdown-item>
+          <el-dropdown-item @click.native="handleClickUploadVisible">更换头像</el-dropdown-item>
           <router-link to="/resetPassword" style="text-decoration: none;">
             <el-dropdown-item>修改密码</el-dropdown-item>
           </router-link>
           <el-dropdown-item @click.native="logout" divided>退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-
+      <el-dialog :visible.sync="dialogVisible" center >
+        <el-upload style="text-align: center"
+          drag
+          :action="doPost"
+          multiple
+          :limit="3"
+          :on-exceed="handleExceed"
+          :before-upload="beforeAvatarUpload">
+          <i class="el-icon-upload"></i>
+          <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+          <div class="el-upload__tip" slot="tip">只能上传jpg/png/bmp/jpeg文件，且不超过2MB</div>
+        </el-upload>
+      </el-dialog>
     </el-header>
     <el-container style="height: 100%;">
       <el-aside :width="isCollapse ? '64px' : '200px'">
@@ -37,7 +49,7 @@
               <span>{{item.label}}</span>
             </template>
             <!--二级菜单-->
-            <el-menu-item :index="children.url" v-for="children in item.children" :key="children.id">
+            <el-menu-item :index="children.url" v-for="children in item.children" :key="children.id" style="text-align: right">
               <template slot="title">
                 <!--图标-->
 <!--                <i class="el-icon-caret-right"></i>-->
@@ -79,14 +91,15 @@ export default {
         '8': 'el-icon-setting'
       },
       isCollapse: false,
-      headerName: '',
-      header: '//127.0.0.1:8090/img/',
+      headerObj: '',
+      header: '',
+      dialogVisible: false,
       user: window.sessionStorage.getItem('name')
     }
   },
   created () {
-    this.getUserHeader()
     this.getUserRoleList()
+    this.getUserHeader()
   },
   methods: {
     async getUserRoleList () {
@@ -124,11 +137,43 @@ export default {
       this.isCollapse = !this.isCollapse
     },
     async getUserHeader () {
-      await this.$axios.post('user/getHeaderByUsername', {'username': window.sessionStorage.getItem('username')}).then(result => {
+      await this.$axios.post('user/getHeaderByUsername', {'username': window.sessionStorage.getItem('username')}).then(async result => {
         if (result.data.code === 200) {
-          this.headerName = result.data.data
+          await this.$axios.get('img/' + result.data.data, {responseType: 'arraybuffer'}).then(response => {
+            return 'data:image/png;base64,' + btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+          }).then(data => {
+            this.$refs.img.src = data
+          })
         }
       })
+    },
+    handleClickUploadVisible () {
+      this.dialogVisible = true
+    },
+    async doPost (file) {
+      console.log(file.name)
+      // await this.$axios.post('user/headerUpload', {'file': file})
+    },
+    handleExceed (files, fileList) {
+      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    },
+    beforeAvatarUpload (file) {
+      let isAccept = false
+      let acceptAvatar = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp']
+      acceptAvatar.forEach(item => {
+        if (item === file.type) {
+          isAccept = true
+        }
+      })
+      const isLt2M = file.size / 1024 / 1024 < 2
+
+      if (!isAccept) {
+        this.$message.error('上传头像图片只能是 JPG/JPEG/PNG/BMP 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isAccept && isLt2M
     }
   }
 }
