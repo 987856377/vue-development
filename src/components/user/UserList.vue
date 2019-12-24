@@ -302,10 +302,19 @@ export default {
           if (row.flag === 1) row.flag = 0
           else if (row.flag === 0) row.flag = 1
           await this.$axios.post('user/cancelUserById', {'id': row.id, 'flag': row.flag}).then(result => {
-            this.loading = false
-            return this.$message({ type: 'success', message: '更新用户状态成功!' })
+            if (result.data.data === true) {
+              this.loading = false
+              return this.$message({ type: 'success', message: '更新用户状态成功!' })
+            } else {
+              if (row.flag === 1) row.flag = 0
+              else if (row.flag === 0) row.flag = 1
+              this.loading = false
+              return this.$message({ type: 'error', message: '更新用户状态失败, 改机构可能已停用, 详情请咨询管理员!' })
+            }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
+            if (row.flag === 1) row.flag = 0
+            else if (row.flag === 0) row.flag = 1
             this.loading = false
             return this.$message({ type: 'error', message: '更新用户状态失败: ' + error })
           })

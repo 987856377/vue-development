@@ -3,8 +3,9 @@
     <el-header>
       <h2 style="margin-left: 40%; text-align: center">Electronic Prescription Platform</h2>
       <el-dropdown trigger="click">
-        <div style="width: 50px; height: 50px; float:left; border-radius: 50%; border: 3px solid; overflow: hidden;">
-          <img src="../assets/NIL.png" style="width: 52px; height: 52px; align-self: center"/>
+        <div style="width: 50px; height: 50px; float:left; border-radius: 50%; border: 3px snow solid; overflow: hidden;">
+<!--          <img :src="header + headerName" slot="reference" style="width: 52px; height: 52px; align-self: center"/>-->
+          <img src="http://127.0.0.1:8090/img/admin.png" slot="reference" style="width: 52px; height: 52px; align-self: center"/>
           <i class="el-icon-arrow-down el-icon--right"></i>
         </div>
         <el-dropdown-menu slot="dropdown" style="text-align: center">
@@ -58,7 +59,6 @@
 
 <script>
 import Home from '@/components/Home'
-
 export default {
   name: 'index',
   components: {
@@ -79,10 +79,13 @@ export default {
         '8': 'el-icon-setting'
       },
       isCollapse: false,
+      headerName: '',
+      header: '//127.0.0.1:8090/img/',
       user: window.sessionStorage.getItem('name')
     }
   },
   created () {
+    this.getUserHeader()
     this.getUserRoleList()
   },
   methods: {
@@ -119,6 +122,13 @@ export default {
     },
     toggleCollapse () {
       this.isCollapse = !this.isCollapse
+    },
+    async getUserHeader () {
+      await this.$axios.post('user/getHeaderByUsername', {'username': window.sessionStorage.getItem('username')}).then(result => {
+        if (result.data.code === 200) {
+          this.headerName = result.data.data
+        }
+      })
     }
   }
 }
