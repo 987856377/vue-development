@@ -2,6 +2,11 @@
   <el-container class='home-container'>
     <el-header>
       <h2 style="margin-left: 40%; text-align: center">Electronic Prescription Platform</h2>
+      <i class="el-icon-bell" style="margin-left: 20%; margin-top: 15px">
+        <div v-if="count > 0">
+          <el-badge :value="count" :max="99" class="item"/>
+        </div>
+      </i>
       <el-dropdown trigger="click">
         <div style="width: 50px; height: 50px; float:left; border-radius: 50%; border: 3px snow solid; overflow: hidden;">
           <img ref="img" src="../assets/NIL.png" slot="reference" style="width: 52px; height: 52px; align-self: center"/>
@@ -99,6 +104,7 @@ export default {
       header: '',
       file: Object,
       fileList: [],
+      count: 0,
       dialogVisible: false,
       user: window.sessionStorage.getItem('name')
     }
@@ -106,6 +112,7 @@ export default {
   created () {
     this.getUserRoleList()
     this.getUserHeader()
+    this.getUnReadCount()
   },
   methods: {
     async getUserRoleList () {
@@ -155,6 +162,13 @@ export default {
         return 'data:image/png;base64,' + btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
       }).then(data => {
         this.$refs.img.src = data
+      })
+    },
+    async getUnReadCount () {
+      await this.$axios.post('message/getUnReadCount', {'receiver': window.sessionStorage.getItem('id')}).then(result => {
+        if (result.data.code === 200) {
+          this.count = result.data.data
+        }
       })
     },
     handleClickUploadVisible () {
@@ -254,5 +268,10 @@ export default {
     text-align: center;
     letter-spacing: 0.2em;
     cursor: pointer;
+  }
+
+  .item {
+    margin-top: -65px;
+    margin-right: -40px;
   }
 </style>
