@@ -19,15 +19,19 @@
           <el-dropdown-item @click.native="logout" divided>退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
-      <el-dialog :visible.sync="dialogVisible" center >
+      <el-dialog :visible.sync="dialogVisible" center width="500px">
         <el-upload style="text-align: center"
+          :limit="1"
+          ref="upload"
+          action
           drag
-          :action="doPost"
-          multiple
-          :limit="3"
-          :on-exceed="handleExceed"
-          :before-upload="beforeAvatarUpload">
-          <i class="el-icon-upload"></i>
+          :file-list="fileList"
+          accept="image/*"
+          :before-upload="beforeAvatarUpload"
+          :on-success="handleAvatarSuccess"
+          :http-request="doPost"
+        >
+          <i class="el-icon-picture-outline" style="font-size: 80px"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">只能上传jpg/png/bmp/jpeg文件，且不超过2MB</div>
         </el-upload>
@@ -93,6 +97,8 @@ export default {
       isCollapse: false,
       headerObj: '',
       header: '',
+      file: Object,
+      fileList: [],
       dialogVisible: false,
       user: window.sessionStorage.getItem('name')
     }
@@ -139,41 +145,49 @@ export default {
     async getUserHeader () {
       await this.$axios.post('user/getHeaderByUsername', {'username': window.sessionStorage.getItem('username')}).then(async result => {
         if (result.data.code === 200) {
-          await this.$axios.get('img/' + result.data.data, {responseType: 'arraybuffer'}).then(response => {
-            return 'data:image/png;base64,' + btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
-          }).then(data => {
-            this.$refs.img.src = data
-          })
+          this.header = result.data.data
+          this.getHeaderImage()
         }
+      })
+    },
+    async getHeaderImage () {
+      await this.$axios.get('img/' + this.header, {responseType: 'arraybuffer'}).then(response => {
+        return 'data:image/png;base64,' + btoa(new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+      }).then(data => {
+        this.$refs.img.src = data
       })
     },
     handleClickUploadVisible () {
       this.dialogVisible = true
     },
-    async doPost (file) {
-      console.log(file.name)
-      // await this.$axios.post('user/headerUpload', {'file': file})
+    async doPost () {
+      let formData = new FormData()
+      formData.set('file', this.file)
+      await this.$axios.post('user/headerUpload', formData, {headers: {'Content-type': 'multipart/form-data'}}).then(result => {
+        if (result.data.code === 200) {
+          this.getHeaderImage()
+          this.dialogVisible = false
+          this.fileList = []
+        } else {
+          this.dialogVisible = false
+          return this.$message.error('头像上传失败: ' + result.data.message)
+        }
+      }).catch(error => {
+        this.dialogVisible = false
+        return this.$message.error('头像上传失败: ' + error)
+      })
     },
-    handleExceed (files, fileList) {
-      this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+    handleAvatarSuccess (res, file) {
+      this.getUserHeader()
     },
     beforeAvatarUpload (file) {
-      let isAccept = false
-      let acceptAvatar = ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp']
-      acceptAvatar.forEach(item => {
-        if (item === file.type) {
-          isAccept = true
-        }
-      })
       const isLt2M = file.size / 1024 / 1024 < 2
 
-      if (!isAccept) {
-        this.$message.error('上传头像图片只能是 JPG/JPEG/PNG/BMP 格式!')
-      }
       if (!isLt2M) {
         this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      return isAccept && isLt2M
+      this.file = new File([file], `${this.header.substr(0, this.header.indexOf('.'))}` + `${file.name.substr(file.name.indexOf('.'))}`)
+      return isLt2M
     }
   }
 }
