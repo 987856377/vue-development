@@ -33,7 +33,6 @@
           :file-list="fileList"
           accept="image/*"
           :before-upload="beforeAvatarUpload"
-          :on-success="handleAvatarSuccess"
           :http-request="doPost"
         >
           <i class="el-icon-picture-outline" style="font-size: 80px"></i>
@@ -150,7 +149,7 @@ export default {
       this.isCollapse = !this.isCollapse
     },
     async getUserHeader () {
-      await this.$axios.post('user/getHeaderByUsername', {'username': window.sessionStorage.getItem('username')}).then(async result => {
+      await this.$axios.post('user/getHeaderByUsername', {'username': window.sessionStorage.getItem('username')}).then(result => {
         if (result.data.code === 200) {
           this.header = result.data.data
           this.getHeaderImage()
@@ -190,9 +189,6 @@ export default {
         this.dialogVisible = false
         return this.$message.error('头像上传失败: ' + error)
       })
-    },
-    handleAvatarSuccess (res, file) {
-      this.getUserHeader()
     },
     beforeAvatarUpload (file) {
       const isLt2M = file.size / 1024 / 1024 < 2
