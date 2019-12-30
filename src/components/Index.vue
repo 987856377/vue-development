@@ -2,9 +2,9 @@
   <el-container class='home-container'>
     <el-header>
       <h2 style="margin-left: 40%; text-align: center">Electronic Prescription Platform</h2>
-      <i class="el-icon-bell" style="margin-left: 20%; margin-top: 15px">
+      <i class="el-icon-bell" style="margin-left: 20%; margin-top: 15px; cursor: pointer" @click="toMessageList">
         <div v-if="count > 0">
-          <el-badge :value="count" :max="99" class="item"/>
+          <el-badge :value="count" :max="99" style="margin-top: -70px; margin-left: 30px"/>
         </div>
       </i>
       <el-dropdown trigger="click">
@@ -198,6 +198,10 @@ export default {
       }
       this.file = new File([file], `${this.header.substr(0, this.header.indexOf('.'))}` + `${file.name.substr(file.name.indexOf('.'))}`)
       return isLt2M
+    },
+    toMessageList () {
+      this.count = 0
+      this.$router.push('/inBox')
     }
   }
 }
@@ -264,10 +268,5 @@ export default {
     text-align: center;
     letter-spacing: 0.2em;
     cursor: pointer;
-  }
-
-  .item {
-    margin-top: -65px;
-    margin-right: -40px;
   }
 </style>

@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>消息详情</el-breadcrumb-item>
-      <el-breadcrumb-item>已发送</el-breadcrumb-item>
+      <el-breadcrumb-item>已接收</el-breadcrumb-item>
     </el-breadcrumb>
     <!--    卡片视图-->
     <el-card>
@@ -32,7 +32,7 @@
               </i>
             </template>
           </el-table-column>
-          <el-table-column prop="subject" label="主题" width="120" align="center">
+          <el-table-column prop="subject" label="主题" width="258" align="center">
           </el-table-column>
           <el-table-column prop="content" label="详细" align="center">
           </el-table-column>
@@ -184,6 +184,9 @@ export default {
       this.multipleSelection = val
     },
     async handleClickDelete () {
+      if (this.multipleSelection.length === 0) {
+        return
+      }
       this.multipleSelection.forEach(item => {
         this.ids.push(item.id)
       })

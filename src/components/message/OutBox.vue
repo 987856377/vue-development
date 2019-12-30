@@ -133,6 +133,9 @@ export default {
       this.multipleSelection = val
     },
     async handleClickDelete () {
+      if (this.multipleSelection.length === 0) {
+        return
+      }
       this.multipleSelection.forEach(item => {
         this.ids.push(item.id)
       })
