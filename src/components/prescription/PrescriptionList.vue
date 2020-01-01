@@ -74,22 +74,26 @@
         </el-table-column>
         <el-table-column prop="extra" label="备注" width="140" align="center" >
         </el-table-column>
-        <el-table-column prop="flag" fixed="right" label="操作" align="center" width="255px">
-          <template slot-scope="scope">
-            <div v-if="scope.row.flag === 1">
-              <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
-              <el-button @click="handleClickChange(scope.row)" type="danger" icon="el-icon-remove-outline" size="mini"></el-button>
-              <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
-              <el-button @click="handleCirculateDialog(scope.row)" type="warning" icon="el-icon-sort" size="mini"></el-button>
-            </div>
-            <div v-else-if="scope.row.flag === 0">
-              <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
-              <el-button @click="handleClickChange(scope.row)" type="success" icon="el-icon-circle-check" size="mini"></el-button>
-              <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
-              <el-button @click="handleCirculateDialog(scope.row)" type="warning" icon="el-icon-sort" size="mini"></el-button>
-            </div>
-          </template>
-        </el-table-column>
+         <div v-if="roleFlag === true" style="display: flex">
+           <transition name="el-fade-in-linear">
+              <el-table-column prop="flag" fixed="right" label="操作" align="center" width="255px">
+              <template slot-scope="scope">
+                <div v-if="scope.row.flag === 1">
+                  <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
+                  <el-button @click="handleClickChange(scope.row)" type="danger" icon="el-icon-remove-outline" size="mini"></el-button>
+                  <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
+                  <el-button @click="handleCirculateDialog(scope.row)" type="warning" icon="el-icon-sort" size="mini"></el-button>
+                </div>
+                <div v-else-if="scope.row.flag === 0">
+                  <el-button @click="handleClickView(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
+                  <el-button @click="handleClickChange(scope.row)" type="success" icon="el-icon-circle-check" size="mini"></el-button>
+                  <el-button @click="handleClickCirculate(scope.row)" type="info" icon="el-icon-refresh" size="mini"></el-button>
+                  <el-button @click="handleCirculateDialog(scope.row)" type="warning" icon="el-icon-sort" size="mini"></el-button>
+                </div>
+              </template>
+            </el-table-column>
+           </transition>
+         </div>
       </el-table>
       <!--      分页-->
       <el-pagination
@@ -102,7 +106,7 @@
         :total="total">
       </el-pagination>
       <!--      处方对话框-->
-      <el-dialog :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <el-dialog :visible.sync="dialogTableVisible">
         <div style="border-style: solid; border-width: 1px; height: 700px;">
           <div>
             <h2>{{prescriptionData.orgname}}</h2>
@@ -234,10 +238,8 @@ export default {
   created () {
     this.request.orgname = window.sessionStorage.getItem('orgName')
     this.orgList = JSON.parse(window.sessionStorage.getItem('orgList'))
-    this.getPrescriptionList()
-  },
-  mounted () {
     this.getRoleList()
+    this.getPrescriptionList()
   },
   methods: {
     async getPrescriptionList () {

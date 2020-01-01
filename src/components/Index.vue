@@ -1,7 +1,7 @@
 <template>
   <el-container class='home-container'>
     <el-header>
-      <h2 style="margin-left: 40%; text-align: center">Electronic Prescription Platform</h2>
+      <h2 style="margin-left: 40%; text-align: center">Prescription Circulation Platform</h2>
       <i class="el-icon-bell" style="margin-left: 20%; margin-top: 15px; cursor: pointer" @click="toMessageList">
         <div v-if="count > 0">
           <el-badge :value="count" :max="99" style="margin-top: -70px; margin-left: 30px"/>
