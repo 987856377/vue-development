@@ -269,7 +269,7 @@ export default {
     },
     async getOrgList () {
       this.loading = true
-      await this.$axios.post('organization/getOrgList', this.page).then(result => {
+      await this.$axios.post('organization/getOrgList', {'page': this.page}).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size
