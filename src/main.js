@@ -5,14 +5,14 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import qs from 'qs'
-import ecahrts from 'echarts'
+import echarts from 'echarts'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/index.css'
 
 Vue.use(ElementUI)
 Vue.config.productionTip = false
-Vue.prototype.$echarts = ecahrts
+Vue.prototype.$echarts = echarts
 Vue.prototype.$axios = axios
 Vue.prototype.$qs = qs
 // 配置请求根路径
