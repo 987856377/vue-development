@@ -178,7 +178,7 @@ export default {
       formData.set('file', this.file)
       await this.$axios.post('user/headerUpload', formData, {headers: {'Content-type': 'multipart/form-data'}}).then(result => {
         if (result.data.code === 200) {
-          this.getHeaderImage()
+          this.getUserHeader()
           this.dialogVisible = false
           this.fileList = []
         } else {

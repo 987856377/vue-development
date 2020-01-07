@@ -29,14 +29,16 @@
         <el-date-picker size="mini" type="date" value-format="yyyy-MM-dd" v-model="request.begin" placeholder="开始日期"></el-date-picker>
         ===>
         <el-date-picker size="mini" type="date" value-format="yyyy-MM-dd" v-model="request.end" placeholder="截至日期"></el-date-picker>
-        <el-radio v-model="request.radio" label="1" style="margin-left: 195px">已启用</el-radio>
-        <el-radio v-model="request.radio" label="0">未启用</el-radio>
-        <el-button type="success" size="mini" @click="handleClickCount" style="margin-left: 65px">统计</el-button>
+        <el-radio v-model="request.flag" label="1" style="margin-left: 40px">已启用</el-radio>
+        <el-radio v-model="request.flag" label="0">未启用</el-radio>
+        <el-radio v-model="request.flag" label="9">待激活</el-radio>
+        <el-button type="success" size="mini" @click="handleClickCount" style="margin-left: 45px">统计</el-button>
+        <el-button type="warning" size="mini" @click="handleClickReset" style="margin-left: 15px">重置</el-button>
       </el-row>
     </el-card>
     <el-card>
       <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
-      <div id="main" style="width: 600px;height:400px;"></div>
+      <div id="main" style="height:400px;"></div>
     </el-card>
   </div>
 </template>
@@ -51,7 +53,7 @@ export default {
         type: '',
         host: '',
         relation: '',
-        radio: '1',
+        flag: '1',
         begin: '',
         end: ''
       },
@@ -211,10 +213,8 @@ export default {
   },
   methods: {
     async handleClickCount () {
-      console.log(this.request)
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById('main'))
-
       myChart.showLoading()
       await this.$axios.post('organization/countOrganization', this.request).then(result => {
         myChart.hideLoading()
@@ -232,6 +232,9 @@ export default {
               name: '详情',
               type: 'pie',
               radius: '65%',
+              label: {
+                formatter: '{b} : {c} ({d}%)'
+              },
               data: result.data.data,
               roseType: 'angle',
               selectedMode: 'single',
@@ -247,6 +250,15 @@ export default {
         }
         )
       })
+    },
+    handleClickReset () {
+      this.request.classify = ''
+      this.request.type = ''
+      this.request.host = ''
+      this.request.relation = ''
+      this.request.flag = '1'
+      this.request.begin = ''
+      this.request.end = ''
     }
   }
 }
