@@ -31,7 +31,7 @@
         </el-table-column>
         <el-table-column prop="orgname" label="机构" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="department" label="归属" width="120" align="center" >
+        <el-table-column prop="department" label="归属" sortable width="120" align="center" >
         </el-table-column>
         <el-table-column prop="type" label="处方类型" sortable width="120" align="center" >
           <template slot-scope="scope">
@@ -130,7 +130,7 @@
           <div style="height: 400px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
             <div style="position: absolute; margin-left: 20px"><h2>Rp.</h2></div>
             <div style="height: 280px; width: 615px; margin-left: 30px; margin-top: 45px; border-style: solid; border-width: 1px">
-              <div style="position: absolute; width: 585px; margin-left: 15px; margin-top: 30px; text-align: left;">{{prescriptionData.medicine}}</div>
+              <div style="position: absolute; width: 585px; margin-left: 30px; margin-top: 30px; text-align: left;">{{prescriptionData.medicine}}</div>
             </div>
             <div style="position: absolute; margin-left: 40px; margin-top: 10px; text-align: left;width: 625px">医嘱: {{prescriptionData.advice}}</div>
             <div style="position: absolute; margin-left: 500px; margin-top: 55px">Price: {{prescriptionData.price}}</div>

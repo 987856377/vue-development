@@ -51,7 +51,7 @@
         :total="total">
       </el-pagination>
       <!--      处方对话框-->
-      <el-dialog :visible.sync="dialogTableVisible" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+      <el-dialog :visible.sync="dialogTableVisible">
         <div style="border-style: solid; border-width: 1px; height: 700px;">
           <div>
             <h2>{{prescriptionData.orgname}}</h2>
@@ -74,8 +74,8 @@
           </div>
           <div style="height: 400px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
             <div style="position: absolute; margin-left: 20px"><h2>Rp.</h2></div>
-            <div style="height: 280px; width: 575px; margin-left: 30px; margin-top: 45px; border-style: solid; border-width: 1px">
-              <div style="position: absolute; margin-left: 200px; margin-top: 30px">{{prescriptionData.medicine}}</div>
+            <div style="height: 280px; width: 615px; margin-left: 30px; margin-top: 45px; border-style: solid; border-width: 1px">
+              <div style="position: absolute; width: 585px; margin-left: 30px; margin-top: 30px; text-align: left;">{{prescriptionData.medicine}}</div>
             </div>
             <div style="position: absolute; margin-left: 40px; margin-top: 10px">医嘱: {{prescriptionData.advice}}</div>
             <div style="position: absolute; margin-left: 500px; margin-top: 30px">Price: {{prescriptionData.price}}</div>

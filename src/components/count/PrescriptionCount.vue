@@ -49,7 +49,7 @@ export default {
             }
           },
           legend: {
-            data: ['本地', '外来', '总']
+            data: ['本地', '外来', '普通', '特殊', '总']
           },
           xAxis: [
             {
@@ -82,6 +82,16 @@ export default {
               name: '外来',
               type: 'bar',
               data: result.data.data.preOutsideList
+            },
+            {
+              name: '普通',
+              type: 'bar',
+              data: result.data.data.preNormalList
+            },
+            {
+              name: '特殊',
+              type: 'bar',
+              data: result.data.data.preSpecialList
             },
             {
               name: '总',
