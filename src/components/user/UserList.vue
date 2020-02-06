@@ -118,6 +118,14 @@
         <div slot="footer" class="dialog-footer" align="center">
           <el-button @click="handleCloseEdit">取 消</el-button>
           <el-button type="primary" @click="handleClickUpdate(usrData)">确 定</el-button>
+          <el-button type="warning" @click="handleClickReset">修改密码</el-button>
+        </div>
+      </el-dialog>
+      <el-dialog title="重置密码" :visible.sync="resetPasswordVisible" width="300px" :show-close="false" :close-on-click-modal="false" :close-on-press-escape="false">
+        <el-input v-model="user.password"></el-input>
+        <div slot="footer" class="dialog-footer" align="center">
+          <el-button @click="handleCloseReset">取 消</el-button>
+          <el-button type="primary" @click="handleClickSet">确 定</el-button>
         </div>
       </el-dialog>
 <!--      角色对话框-->
@@ -176,6 +184,12 @@ export default {
       total: 0,
       dialogTableVisible: false,
       roleTableVisible: false,
+      resetPasswordVisible: false,
+      user: {
+        id: '',
+        username: '',
+        password: ''
+      },
       usrData: Object,
       tableData: [],
       rules: {
@@ -201,7 +215,7 @@ export default {
         ],
         mail: [
           { required: true, message: '请输入用户邮箱', trigger: 'blur' },
-          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+          { min: 11, max: 32, type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
         ],
         responser: [
           { required: true, message: '请输入负责人', trigger: 'blur' },
@@ -326,11 +340,42 @@ export default {
     handleClickEdit (row) {
       this.dialogTableVisible = true
       this.usrData = row
+      this.user.id = row.id
+      this.user.username = row.username
     },
     async handleClickView (row) {
       this.roleTableVisible = true
       this.role.uid = row.id
       this.getUserRoleList()
+    },
+    handleClickReset () {
+      this.dialogTableVisible = false
+      this.resetPasswordVisible = true
+    },
+    handleCloseReset () {
+      this.resetPasswordVisible = false
+      this.user.password = ''
+    },
+    async handleClickSet () {
+      if (this.user.password === '') {
+        return
+      }
+      await this.$axios.post('user/saveOrUpdate', this.user).then(result => {
+        if (result.data.code === 200) {
+          this.resetPasswordVisible = false
+          this.user.password = ''
+          return this.$message.success('密码重置成功')
+        } else {
+          this.resetPasswordVisible = false
+          this.user.password = ''
+          return this.$message.error('密码重置失败')
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        this.resetPasswordVisible = false
+        this.user.password = ''
+        return this.$message.error('密码重置失败: ' + error)
+      })
     },
     handleCloseRoleDialog () {
       this.roleTableVisible = false

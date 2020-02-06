@@ -101,7 +101,7 @@ export default {
       rules1: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+          { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入用户密码', trigger: 'blur' },
@@ -111,7 +111,7 @@ export default {
       rules2: {
         name: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 16, message: '长度在 3 到 16 个字符', trigger: 'blur' }
+          { min: 2, max: 16, message: '长度在 2 到 16 个字符', trigger: 'blur' }
         ],
         nation: [
           { required: true, message: '请输入用户民族', trigger: 'blur' },
@@ -187,12 +187,19 @@ export default {
             await this.$axios.post('userinfo/completeUserInfo', this.userInfo).then(async result => {
               if (result.data.code !== 200) {
                 this.loading = false
-                return this.$message.error('用户信息完善失败: ' + result.data.data + '该用户已被注册, 可自行完善信息')
+                return this.$message.error('用户注册失败: ' + result.data.data)
               }
-              await this.$axios.post('userrole/addUserRole', {'uid': this.userInfo.id, 'destRole': this.userInfo.role})
-              this.loading = false
-              await this.$router.push('/userList')
-              return this.$message.success('用户注册成功')
+              await this.$axios.post('userrole/addUserRole', {'uid': this.userInfo.id, 'destRole': this.userInfo.role}).then(async result => {
+                if (result.data.code === 200) {
+                  this.loading = false
+                  this.$refs.addUserFormRef.resetFields()
+                  this.$refs.addUserInfoFormRef.resetFields()
+                  return this.$message.success('用户注册成功')
+                } else {
+                  this.loading = false
+                  return this.$message.error('用户注册失败: ' + result.data.data)
+                }
+              })
             }).catch(error => {
               this.loading = false
               return this.$message.error('用户信息完善失败: ' + error)
