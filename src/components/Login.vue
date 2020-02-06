@@ -8,16 +8,17 @@
       <el-form ref="loginFormRef" label-width="0px" :model="user" :rules="rules" class="form-login" DefaultButton >
         <!-- 用户名 -->
         <el-form-item prop="username">
-          <el-input v-model="user.username" prefix-icon="el-icon-view"></el-input>
+          <el-input v-model="user.username" prefix-icon="el-icon-view" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <!-- 密码 -->
         <el-form-item prop="password">
-          <el-input v-model="user.password" type="password" prefix-icon="el-icon-d-arrow-right"></el-input>
+          <el-input v-model="user.password" type="password" prefix-icon="el-icon-d-arrow-right" placeholder="请输入密码"></el-input>
         </el-form-item>
         <!-- 按钮 -->
         <el-form-item>
           <el-button id="btnLogin" type="primary" @click='login' v-loading.fullscreen.lock="loading">登录</el-button>
           <el-button type="info" @click='reset'>重置</el-button>
+          <el-button type="warning" @click='forget'>忘记密码</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -99,6 +100,9 @@ export default {
     },
     reset () {
       this.$refs.loginFormRef.resetFields()
+    },
+    forget () {
+      this.$router.push('/reset')
     }
   }
 }
