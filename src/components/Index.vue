@@ -128,6 +128,9 @@ export default {
       })
     },
     async getRoleModule () {
+      if (this.roleList.length === 0) {
+        return this.$message.error('您未拥有任何角色, 详情请咨询管理员')
+      }
       await this.$axios.post('permission/role-module/getModulesByRoles', {
         'userRoles': this.roleList
       }).then(result => {

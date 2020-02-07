@@ -22,23 +22,23 @@
       <el-table :data="tableData" ref="multipleTable" tooltip-effect="dark" style="width: 100%" max-height="520"
                 stripe v-loading.lock="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading"
                 @selection-change="handleSelectionChange" @row-dblclick="getMessageDetail">
-          <el-table-column type="selection" width="55">
-          </el-table-column>
-          <el-table-column prop="readFlag" icon="el-icon-message" width="80" align="center" >
-            <template slot-scope="scope">
-              <i class="el-icon-message">
-                <div v-if="scope.row.readFlag === 1" style="text-align: center"></div>
-                <div v-else-if="scope.row.readFlag === 0" style="color: red; text-align: center">未读</div>
-              </i>
-            </template>
-          </el-table-column>
-          <el-table-column prop="subject" label="主题" width="258" align="center">
-          </el-table-column>
-          <el-table-column prop="content" label="详细" align="center">
-          </el-table-column>
-          <el-table-column prop="sendTime" label="发送时间" sortable width="140" align="right">
-          </el-table-column>
-        <el-table-column prop="flag" fixed="right" label="操作" width="125px" align="center">
+        <el-table-column type="selection" width="55">
+        </el-table-column>
+        <el-table-column prop="readFlag" icon="el-icon-message" width="80" align="center" >
+          <template slot-scope="scope">
+            <i class="el-icon-message">
+              <div v-if="scope.row.readFlag === 1" style="text-align: center"></div>
+              <div v-else-if="scope.row.readFlag === 0" style="color: red; text-align: center">未读</div>
+            </i>
+          </template>
+        </el-table-column>
+        <el-table-column prop="subject" label="主题" width="258" align="center">
+        </el-table-column>
+        <el-table-column prop="content" label="详细" align="center">
+        </el-table-column>
+        <el-table-column prop="sendTime" label="发送时间" sortable width="140" align="right">
+        </el-table-column>
+        <el-table-column fixed="right" label="操作" width="125px" align="center">
           <template slot-scope="scope">
             <el-button @click="handleClickReply(scope.row)" type="primary" icon="el-icon-time" size="mini">回复</el-button>
           </template>

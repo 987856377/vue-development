@@ -34,6 +34,11 @@
         </el-table-column>
         <el-table-column prop="sendTime" label="发送时间" sortable width="140" align="right">
         </el-table-column>
+        <el-table-column fixed="right" label="操作" width="125px" align="center">
+          <template slot-scope="scope">
+            <el-button @click="handleClickSend(scope.row)" type="primary" icon="el-icon-time" size="mini">发送</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!--      分页-->
       <el-pagination
@@ -163,6 +168,19 @@ export default {
         })
       }
       this.messageData = row
+    },
+    async handleClickSend (row) {
+      await this.$axios.post('message/sendDraftMessage', {'id': row.id}).then(result => {
+        if (result.data.code === 200) {
+          this.getMessageList()
+          return this.$message.success('消息发送成功')
+        } else {
+          return this.$message.error('消息发送失败: ' + result.data.message)
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$message.error('消息发送失败: ' + error)
+      })
     }
   }
 }
