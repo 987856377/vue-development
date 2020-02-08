@@ -140,10 +140,16 @@ export default {
       if (this.role.title === '' || this.role.code === '' || this.role.flag === '') {
         return
       }
+      for (let i = 0; i < this.roleList.length; i++) {
+        if (this.roleList[i].code === this.role.code || this.roleList[i].code === this.role.title) {
+          return this.$message({type: 'error', message: '角色标签或角色代码已存在, 请重新输入!'})
+        }
+      }
       await this.$axios.post('role/saveOrUpdate', this.role).then(result => {
         if (result.data.code === 200) {
           this.dialogTableVisible = false
           this.getRoleListAvalible()
+          this.$refs.roleFormRef.resetFields()
           return this.$message({ type: 'success', message: '添加角色成功!' })
         } else {
           // eslint-disable-next-line standard/object-curly-even-spacing
