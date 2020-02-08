@@ -137,6 +137,9 @@ export default {
       this.$refs.roleFormRef.resetFields()
     },
     async handleClickSave (role) {
+      if (this.role.title === '' || this.role.code === '' || this.role.flag === '') {
+        return
+      }
       await this.$axios.post('role/saveOrUpdate', this.role).then(result => {
         if (result.data.code === 200) {
           this.dialogTableVisible = false
