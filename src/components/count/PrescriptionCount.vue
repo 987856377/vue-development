@@ -4,7 +4,7 @@
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
       <el-breadcrumb-item>数据统计</el-breadcrumb-item>
-      <el-breadcrumb-item>人员统计</el-breadcrumb-item>
+      <el-breadcrumb-item>处方统计</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card>
       <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
