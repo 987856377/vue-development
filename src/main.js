@@ -16,7 +16,7 @@ Vue.prototype.$echarts = echarts
 Vue.prototype.$axios = axios
 Vue.prototype.$qs = qs
 // 配置请求根路径
-axios.defaults.baseURL = '/'
+axios.defaults.baseURL = '/pcp'
 // axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8'
 // axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

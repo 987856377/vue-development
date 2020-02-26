@@ -11,11 +11,11 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/': { //此处并非和url一致
-        target: 'http://localhost:8090',
+      '/pcp': { //此处并非和url一致
+        target: 'http://localhost:8090/pcp/',
         changeOrigin: true, //允许跨域
         pathRewrite: {
-          '^/': ''
+          '^/pcp': ''
         }
       }
     },
