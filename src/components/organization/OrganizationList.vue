@@ -295,11 +295,11 @@ export default {
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
           this.loading = true
-          if (row.flag === 1) row.flag = 0
-          else if (row.flag === 0) row.flag = 1
-          else if (row.flag === 9) row.flag = 1
           await this.$axios.post('organization/cancelOrg', {'name': row.name, 'flag': row.flag}).then(result => {
             this.loading = false
+            if (row.flag === 1) row.flag = 0
+            else if (row.flag === 0) row.flag = 1
+            else if (row.flag === 9) row.flag = 1
             return this.$message({ type: 'success', message: '更新机构状态成功!' })
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {

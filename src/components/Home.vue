@@ -1,10 +1,12 @@
 <template>
   <div>
     <el-card>
-      <img src="../assets/title.jpg" height="120" alt="" width="1250" />
+      <div class="img">
+        <img src="../assets/images/title.jpg" height="120" alt="" width="1250"/>
+      </div>
     </el-card>
     <el-card>
-      <img src="../assets/home.jpg" height="400" alt="" width="700" align="left"/>
+      <img src="../assets/images/home.jpg" height="400" alt="" width="700" align="left"/>
       <el-card>
         <p style="text-indent:25px; text-align: left">{{introduction}}</p>
       </el-card>
