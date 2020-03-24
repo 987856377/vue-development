@@ -423,8 +423,8 @@ export default {
         })
     },
     handleClickCirculate (row) {
-      if (row.verify !== 1) {
-        return this.$message({ type: 'error', message: '该处方还未通过审核, 不可设置流转状态' })
+      if (row.verify !== 1 || row.flag !== 1) {
+        return this.$message({ type: 'error', message: '该处方未通过审核或已停用, 不可设置流转状态' })
       }
       let msg = ''
       if (row.enable === 1) msg = '此操作将设置该处方不可流转, 是否继续?'
