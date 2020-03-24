@@ -34,6 +34,11 @@
         </el-table-column>
         <el-table-column prop="sendTime" label="发送时间" sortable width="140" align="right">
         </el-table-column>
+        <el-table-column prop="flag" fixed="right" label="操作" align="center" width="185px">
+          <template slot-scope="scope">
+            <el-button @click="getMessageDetail(scope.row)" type="primary" icon="el-icon-time" size="mini">查看</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!--      分页-->
       <el-pagination

@@ -38,9 +38,10 @@
         </el-table-column>
         <el-table-column prop="sendTime" label="发送时间" sortable width="140" align="right">
         </el-table-column>
-        <el-table-column fixed="right" label="操作" width="125px" align="center">
+        <el-table-column fixed="right" label="操作" width="225px" align="center">
           <template slot-scope="scope">
-            <el-button @click="handleClickReply(scope.row)" type="primary" icon="el-icon-time" size="mini">回复</el-button>
+            <el-button @click="getMessageDetail(scope.row)" type="primary" icon="el-icon-time" size="mini">查看</el-button>
+            <el-button @click="handleClickReply(scope.row)" type="success" icon="el-icon-message" size="mini">回复</el-button>
           </template>
         </el-table-column>
       </el-table>
