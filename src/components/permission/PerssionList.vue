@@ -80,7 +80,7 @@ export default {
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$message.error('获取用户已拥有的菜单失败: ' + error)
+        return this.$message.error('获取角色已选菜单失败: ' + error)
       })
     },
     async getFromData () {
@@ -96,7 +96,7 @@ export default {
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
-        return this.$message.error('获取用户未拥有的菜单失败: ' + error)
+        return this.$message.error('获取角色待选菜单失败: ' + error)
       })
     },
     handleSelected (roleData) {
@@ -165,9 +165,10 @@ export default {
           {'rid': this.request.rid, 'midList': this.request.midList}
         ).then(result => {
           if (result.data.code === 200) {
-            return this.$message.success('添加角色菜单成功')
+            this.addData = []
+            return this.$message.success('添加待选角色菜单成功')
           } else {
-            return this.$message.error('添加角色菜单失败: ' + result.data.message)
+            return this.$message.error('添加待选角色菜单失败: ' + result.data.message)
           }
         })
       }
@@ -177,9 +178,10 @@ export default {
           {'rid': this.request.rid, 'midList': this.request.midList}
         ).then(result => {
           if (result.data.code === 200) {
-            return this.$message.success('删除角色菜单成功')
+            this.delData = []
+            return this.$message.success('删除已选角色菜单成功')
           } else {
-            return this.$message.error('删除角色菜单失败: ' + result.data.message)
+            return this.$message.error('删除已选角色菜单失败: ' + result.data.message)
           }
         })
       }
