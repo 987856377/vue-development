@@ -13,15 +13,15 @@
                 element-loading-spinner="el-icon-loading">
         <el-table-column prop="pid" label="处方编号" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="originName" label="来源机构" width="120" align="center">
+        <el-table-column prop="originName" label="发送机构" width="120" align="center">
         </el-table-column>
         <el-table-column prop="senderName" label="发送者" width="120" align="center" >
         </el-table-column>
         <el-table-column prop="originTime" label="发送日期" width="140" align="center" >
         </el-table-column>
-        <el-table-column prop="achieveName" label="目标机构" width="120" align="center" >
+        <el-table-column prop="achieveName" label="接收机构" width="120" align="center" >
         </el-table-column>
-        <el-table-column prop="receiverName" label="目标人员" width="120" align="center" >
+        <el-table-column prop="receiverName" label="接收人员" width="120" align="center" >
         </el-table-column>
         <el-table-column prop="acceptStatus" label="接收状态" width="120" sortable  align="center" >
           <template slot-scope="scope">
@@ -170,7 +170,7 @@ export default {
     },
     async handleClickView (row) {
       if (window.sessionStorage.getItem('name') !== row.receiverName) {
-        return this.$notify({ type: 'error', message: '对不起, 您无权查看' })
+        return this.$notify({ type: 'error', message: '对不起, 本处方仅接收人员有权查看' })
       }
       this.dialogTableVisible = true
       this.circulation_info_id = row.id
