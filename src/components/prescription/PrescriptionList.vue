@@ -237,9 +237,9 @@ export default {
   },
   created () {
     this.request.orgname = window.sessionStorage.getItem('orgName')
-    this.orgList = JSON.parse(window.sessionStorage.getItem('orgList'))
     this.getRoleList()
     this.getPrescriptionList()
+    this.getPeerAndSubOrgListByOrgFlag()
   },
   methods: {
     async getPrescriptionList () {
@@ -296,6 +296,18 @@ export default {
       this.circulationInfo.originCode = window.sessionStorage.getItem('orgCode')
       this.circulationInfo.originName = window.sessionStorage.getItem('orgName')
     },
+    async getPeerAndSubOrgListByOrgFlag () {
+      await this.$axios.post('organization/getPeerAndSubOrgListByOrgFlag', {'orgflag': window.sessionStorage.getItem('orgFlag')}).then(result => {
+        if (result.data.code === 200) {
+          this.orgList = result.data.data
+        } else {
+          return this.$message.error('获取目标机构失败: ' + result.data.message)
+        }
+        // eslint-disable-next-line handle-callback-err
+      }).catch(error => {
+        return this.$message.error('获取目标机构失败: ' + error)
+      })
+    },
     setOrgCode (name) {
       this.orgList.forEach(async item => {
         if (item.name === name) {
@@ -323,14 +335,18 @@ export default {
     },
     handleCloseCirculateDialog () {
       this.dialogPrescriptionVisible = false
+      this.circulationInfo.achieveName = ''
+      this.circulationInfo.receiverName = ''
     },
     async handleClickSendPrescription () {
       if (this.circulationInfo.achieveName === '' || this.circulationInfo.receiverName === '') {
-        return
+        return this.$notify({ type: 'info', message: '请选择目标机构或目标人员' })
       }
       await this.$axios.post('prescription/circulationinfo/saveOrUpdate', this.circulationInfo).then(result => {
         if (result.data.code === 200) {
           this.dialogPrescriptionVisible = false
+          this.circulationInfo.achieveName = ''
+          this.circulationInfo.receiverName = ''
           return this.$notify({ type: 'success', message: '流转成功' })
         } else {
           return this.$notify({ type: 'error', message: '流转失败: ' + result.data.message })
