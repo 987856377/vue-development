@@ -133,7 +133,7 @@
               <div style="position: absolute; width: 585px; margin-left: 30px; margin-top: 30px; text-align: left;">{{prescriptionData.medicine}}</div>
             </div>
             <div style="position: absolute; margin-left: 40px; margin-top: 10px; text-align: left;width: 625px">医嘱: {{prescriptionData.advice}}</div>
-            <div style="position: absolute; margin-left: 500px; margin-top: 55px">Price: {{prescriptionData.price}}</div>
+            <div style="position: absolute; margin-left: 500px; margin-top: 55px; color: red">Price: {{prescriptionData.price}} 元</div>
           </div>
           <div style="height: 80px; width: 675px; margin-left: 20px; border-style: solid; border-width: 1px">
             <div style="position: absolute; margin-left: 20px">开方医生: {{prescriptionData.doctorName}}</div>
