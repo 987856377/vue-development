@@ -178,32 +178,49 @@ export default {
             return this.$notify({ type: 'error', message: '手机号格式错误' })
           }
           this.loading = true
-          await this.$axios.post('user/saveOrUpdate', this.user).then(async result => {
+          await this.$axios.post('userinfo/create', {'user': this.user, 'userInfo': this.userInfo}).then(async result => {
             if (result.data.code !== 200) {
               this.loading = false
               return this.$message.error('用户注册失败: ' + result.data.data)
             }
             this.userInfo.id = result.data.data
-            await this.$axios.post('userinfo/completeUserInfo', this.userInfo).then(async result => {
-              if (result.data.code !== 200) {
+            await this.$axios.post('userrole/addUserRole', {'uid': this.userInfo.id, 'destRole': this.userInfo.role}).then(async result => {
+              if (result.data.code === 200) {
+                this.loading = false
+                this.$refs.addUserFormRef.resetFields()
+                this.$refs.addUserInfoFormRef.resetFields()
+                return this.$message.success('用户注册成功')
+              } else {
                 this.loading = false
                 return this.$message.error('用户注册失败: ' + result.data.data)
               }
-              await this.$axios.post('userrole/addUserRole', {'uid': this.userInfo.id, 'destRole': this.userInfo.role}).then(async result => {
-                if (result.data.code === 200) {
-                  this.loading = false
-                  this.$refs.addUserFormRef.resetFields()
-                  this.$refs.addUserInfoFormRef.resetFields()
-                  return this.$message.success('用户注册成功')
-                } else {
-                  this.loading = false
-                  return this.$message.error('用户注册失败: ' + result.data.data)
-                }
-              })
-            }).catch(error => {
-              this.loading = false
-              return this.$message.error('用户信息完善失败: ' + error)
             })
+            // await this.$axios.post('user/saveOrUpdate', this.user).then(async result => {
+            //   if (result.data.code !== 200) {
+            //     this.loading = false
+            //     return this.$message.error('用户注册失败: ' + result.data.data)
+            //   }
+            //   this.userInfo.id = result.data.data
+            // await this.$axios.post('userinfo/completeUserInfo', this.userInfo).then(async result => {
+            //   if (result.data.code !== 200) {
+            //     this.loading = false
+            //     return this.$message.error('用户注册失败: ' + result.data.data)
+            //   }
+            //   await this.$axios.post('userrole/addUserRole', {'uid': this.userInfo.id, 'destRole': this.userInfo.role}).then(async result => {
+            //     if (result.data.code === 200) {
+            //       this.loading = false
+            //       this.$refs.addUserFormRef.resetFields()
+            //       this.$refs.addUserInfoFormRef.resetFields()
+            //       return this.$message.success('用户注册成功')
+            //     } else {
+            //       this.loading = false
+            //       return this.$message.error('用户注册失败: ' + result.data.data)
+            //     }
+            //   })
+            // }).catch(error => {
+            //   this.loading = false
+            //   return this.$message.error('用户信息完善失败: ' + error)
+            // })
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false

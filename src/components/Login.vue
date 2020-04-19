@@ -67,27 +67,44 @@ export default {
           }
           window.sessionStorage.setItem('Authorization', result.headers.authorization)
           window.sessionStorage.setItem('username', this.user.username)
-          await this.$axios.post('userinfo/getUserInfoByUsername', {'username': this.user.username}).then(async result1 => {
+          await this.$axios.post('userinfo/getUserAndOrgInfoByUsername', {'username': this.user.username}).then(async result1 => {
             if (result1.data.code === 200) {
               window.sessionStorage.setItem('id', result1.data.data.id)
               window.sessionStorage.setItem('name', result1.data.data.name)
-              await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
-                if (result.data.code === 200) {
-                  window.sessionStorage.setItem('orgCode', result.data.data.code)
-                  window.sessionStorage.setItem('orgName', result.data.data.name)
-                  window.sessionStorage.setItem('orgFlag', result.data.data.orgflag)
-                  window.sessionStorage.setItem('orgList', JSON.stringify(result.data.data.subOrgList))
-                }
-                // eslint-disable-next-line handle-callback-err
-              }).catch(error => {
-                this.loading = false
-                return this.$message.error('获取数据失败' + error.message)
-              })
+              window.sessionStorage.setItem('orgCode', result1.data.data.orgcode)
+              window.sessionStorage.setItem('orgName', result1.data.data.orgname)
+              window.sessionStorage.setItem('orgFlag', result1.data.data.orgflag)
+              window.sessionStorage.setItem('orgList', JSON.stringify(result1.data.data.subOrgList))
             } else {
               this.loading = false
               return this.$message.error('登录失败')
             }
+          }).catch(error => {
+            this.loading = false
+            return this.$message.error('获取数据失败' + error.message)
           })
+          // 代码优化, 将两次请求合并为一次请求
+          // await this.$axios.post('userinfo/getUserInfoByUsername', {'username': this.user.username}).then(async result1 => {
+          //   if (result1.data.code === 200) {
+          //     window.sessionStorage.setItem('id', result1.data.data.id)
+          //     window.sessionStorage.setItem('name', result1.data.data.name)
+          //     await this.$axios.post('organization/getOrgInfoByUid', {'id': window.sessionStorage.getItem('id')}).then(result => {
+          //       if (result.data.code === 200) {
+          //         window.sessionStorage.setItem('orgCode', result.data.data.code)
+          //         window.sessionStorage.setItem('orgName', result.data.data.name)
+          //         window.sessionStorage.setItem('orgFlag', result.data.data.orgflag)
+          //         window.sessionStorage.setItem('orgList', JSON.stringify(result.data.data.subOrgList))
+          //       }
+          //       // eslint-disable-next-line handle-callback-err
+          //     }).catch(error => {
+          //       this.loading = false
+          //       return this.$message.error('获取数据失败' + error.message)
+          //     })
+          //   } else {
+          //     this.loading = false
+          //     return this.$message.error('登录失败')
+          //   }
+          // })
           await this.$router.push('/')
           this.loading = false
           return this.$message.success('登录成功')
