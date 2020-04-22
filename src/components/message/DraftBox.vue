@@ -29,8 +29,14 @@
         <el-table-column prop="receiverName" label="收件人" width="120" align="center">
         </el-table-column>
         <el-table-column prop="subject" label="主题" align="center">
+          <template slot-scope="scope">
+            <span>{{scope.row.subject | ellipsis}}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="content" label="详细" align="center">
+          <template slot-scope="scope">
+            <span>{{scope.row.content | ellipsis}}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="sendTime" label="发送时间" sortable width="140" align="right">
         </el-table-column>
@@ -53,14 +59,14 @@
       </el-pagination>
       <!--      消息详情对话框-->
       <el-dialog :visible.sync="messageTableVisible">
-        <div style="border-style: solid; border-width: 1px; height: 600px;">
+        <div style="border-style: solid; border-width: 1px; height: 300px;">
           <div>
             <h4 style="position: absolute; margin-left: 25px; margin-top: 15px;">{{messageData.sendTime}}</h4>
             <h4 style="position: absolute; margin-left: 25px; margin-top: 35px;">{{messageData.sendOrgName}}, {{messageData.senderName}}</h4>
             <h2  style="position: absolute; margin-left: 50%; transform: translate(-50%, -50%); margin-top: 65px;">{{messageData.subject}}</h2>
           </div>
-          <div style="height: 500px; width: 675px; margin-left: 20px; margin-top: 100px;">
-            <div style="height: 450px; width: 625px; margin-left: 20px; margin-top: 15px; text-align: left">
+          <div style="height: 200px; width: 675px; margin-left: 20px; margin-top: 100px;">
+            <div style="height: 150px; width: 625px; margin-left: 20px; margin-top: 15px; text-align: left">
               <h3>{{messageData.content}}</h3>
             </div>
           </div>
@@ -94,6 +100,15 @@ export default {
   },
   created () {
     this.getMessageList()
+  },
+  filters: {
+    ellipsis (value) {
+      if (!value) return ''
+      if (value.length > 25) {
+        return value.slice(0, 25) + '...'
+      }
+      return value
+    }
   },
   methods: {
     async getMessageList () {
