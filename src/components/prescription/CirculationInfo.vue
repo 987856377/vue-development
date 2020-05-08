@@ -15,7 +15,7 @@
         </el-table-column>
         <el-table-column prop="originName" label="发送机构" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="senderName" label="发送者" width="120" align="center" >
+        <el-table-column prop="senderName" label="发送人员" width="120" align="center" >
         </el-table-column>
         <el-table-column prop="originTime" label="发送日期" width="140" align="center" >
         </el-table-column>
@@ -27,6 +27,7 @@
           <template slot-scope="scope">
             <div v-if="scope.row.acceptStatus === 1" style="text-align: center">已接收</div>
             <div v-else-if="scope.row.acceptStatus === 0" style="color: red; text-align: center">未接收</div>
+            <div v-else-if="scope.row.acceptStatus === -1" style="color: red; text-align: center">已撤回</div>
             <div v-else-if="scope.row.acceptStatus === 9" style="color: red; text-align: center">已拒绝</div>
           </template>
         </el-table-column>
@@ -87,14 +88,25 @@
             <div style="position: absolute; margin-left: 280px; margin-top: 30px">审核医生手机: {{prescriptionData.checkPhone}}</div>
           </div>
         </div>
-        <div slot="footer" class="dialog-footer" align="center">
+        <div slot="footer" class="dialog-footer" align="center" style="margin-top: -30px">
           <div v-if="roleFlag === true">
-            <el-button @click="handleCloseView">关  闭</el-button>
-            <el-button type="primary" @click="handleClickAccept(prescriptionData)">接  收</el-button>
-            <el-button type="danger" @click="handleClickDeny(prescriptionData)">拒  绝</el-button>
+            <div v-if="acceptStatus === 0">
+              <el-button type="primary" @click="handleClickAccept(prescriptionData)">接  收</el-button>
+              <el-button type="danger" @click="handleClickDeny(prescriptionData)">拒  绝</el-button>
+              <el-button @click="handleCloseView">关  闭</el-button>
+            </div>
+            <div v-else>
+              <el-button @click="handleCloseView">关  闭</el-button>
+            </div>
           </div>
           <div v-else-if="roleFlag === false">
-            <el-button @click="handleCloseView">关  闭</el-button>
+            <div v-if="acceptStatus === 0">
+              <el-button type="danger" @click="handleClickCallBack">撤  回</el-button>
+              <el-button @click="handleCloseView">关  闭</el-button>
+            </div>
+            <div v-else>
+              <el-button @click="handleCloseView">关  闭</el-button>
+            </div>
           </div>
         </div>
       </el-dialog>
@@ -118,6 +130,7 @@ export default {
       circulation_info_id: '',
       acceptStatus: '',
       prescriptionData: Object,
+      circulationInfo: Object,
       loading: false,
       waiting: false,
       total: 0,
@@ -169,30 +182,38 @@ export default {
       })
     },
     async handleClickView (row) {
-      if (window.sessionStorage.getItem('name') !== row.receiverName) {
-        return this.$notify({ type: 'error', message: '对不起, 本处方仅接收人员有权查看' })
-      }
-      this.dialogTableVisible = true
-      this.circulation_info_id = row.id
-      this.acceptStatus = row.acceptStatus
-      this.$axios.post('prescription/status/getPrescriptionById', {'pid': row.pid}).then(result => {
-        if (result.data.code === 200) {
-          // eslint-disable-next-line no-return-assign
-          return this.prescriptionData = result.data.data
-        } else {
-          return this.$notify({type: 'error', message: '获取处方数据失败: ' + result.data.message})
+      if (window.sessionStorage.getItem('name') === row.receiverName || window.sessionStorage.getItem('name') === row.senderName) {
+        if (window.sessionStorage.getItem('name') === row.senderName) {
+          this.roleFlag = false
         }
-        // eslint-disable-next-line handle-callback-err
-      }).catch(error => {
-        return this.$notify({type: 'error', message: '获取处方数据失败: ' + error})
-      })
+        this.dialogTableVisible = true
+        this.circulation_info_id = row.id
+        this.acceptStatus = row.acceptStatus
+        this.circulationInfo = row
+        this.$axios.post('prescription/status/getPrescriptionById', { 'pid': row.pid }).then(result => {
+          if (result.data.code === 200) {
+            // eslint-disable-next-line no-return-assign
+            return this.prescriptionData = result.data.data
+          } else {
+            return this.$notify({ type: 'error', message: '获取处方数据失败: ' + result.data.message })
+          }
+          // eslint-disable-next-line handle-callback-err
+        }).catch(error => {
+          return this.$notify({ type: 'error', message: '获取处方数据失败: ' + error })
+        })
+      } else {
+        return this.$notify({ type: 'error', message: '对不起, 本处方您无权查看' })
+      }
     },
     handleCloseView () {
       this.dialogTableVisible = false
+      this.circulationInfo = Object
     },
     async handleClickAccept (prescriptionData) {
       if (this.acceptStatus === 1) {
         return this.$notify({ type: 'info', message: '处方已接收, 不需重复接收' })
+      } else if (this.acceptStatus === -1) {
+        return this.$notify({ type: 'info', message: '处方已撤回, 不可接收' })
       }
       await this.$axios.post('prescription/circulationinfo/acceptPrescription', {'id': this.circulation_info_id,
         'acceptStatus': 1}).then(async result => {
@@ -226,6 +247,8 @@ export default {
         return this.$notify({ type: 'info', message: '处方已拒绝' })
       } else if (this.acceptStatus === 1) {
         return this.$notify({ type: 'info', message: '处方已接收, 不可被拒绝' })
+      } else if (this.acceptStatus === -1) {
+        return this.$notify({ type: 'info', message: '处方已被撤回, 不可操作' })
       }
       this.$prompt('请输入原因', '备注', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async ({ value }) => {
@@ -245,6 +268,37 @@ export default {
           })
         }).catch((error) => {
           this.$notify({ type: 'error', message: '取消输入: ' + error })
+        })
+    },
+    handleClickCallBack () {
+      if (this.circulationInfo.acceptStatus === 1) {
+        return this.$notify({ type: 'info', message: '处方已被接收, 不可撤回' })
+      } else if (this.circulationInfo.acceptStatus === -1) {
+        return this.$notify({ type: 'info', message: '处方已被撤回, 不可重复撤回' })
+      } else if (this.circulationInfo.acceptStatus === 9) {
+        return this.$notify({ type: 'info', message: '处方已被拒绝, 不可撤回' })
+      }
+      let msg = '是否确定撤回该处方?'
+      this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
+        .then(async () => {
+          this.circulationInfo.acceptStatus = -1
+          this.circulationInfo.extra = '处方被发送人员主动撤回'
+          await this.$axios.post('prescription/circulationinfo/saveOrUpdate', this.circulationInfo).then(result => {
+            if (result.data.data === true) {
+              this.dialogTableVisible = false
+              this.circulationInfo = Object
+              this.getCirculationInfoList()
+              return this.$message({ type: 'success', message: '处方撤回成功!' })
+            } else {
+              return this.$message({ type: 'error', message: '处方撤回失败: ' + result.data.message })
+            }
+            // eslint-disable-next-line handle-callback-err
+          }).catch(error => {
+            return this.$message({ type: 'error', message: '处方撤回失败: ' + error })
+          })
+        }).catch(() => {
+          this.loading = false
+          this.$message({ type: 'info', message: '已取消操作' })
         })
     },
     handleSizeChange (newSize) {

@@ -142,11 +142,16 @@
             <div style="position: absolute; margin-left: 280px; margin-top: 30px">审核医生手机: {{prescriptionData.checkPhone}}</div>
           </div>
         </div>
-        <div slot="footer" class="dialog-footer" align="center">
+        <div slot="footer" class="dialog-footer" align="center" style="margin-top: -30px">
           <div v-if="roleFlag === true">
-            <el-button @click="handleCloseView">关 闭</el-button>
-            <el-button type="primary" @click="handleClickPass(prescriptionData)">通  过</el-button>
-            <el-button type="danger" @click="handleClickUnPass(prescriptionData)">不通过</el-button>
+            <div v-if="verifyStatus === 9">
+              <el-button type="primary" @click="handleClickPass(prescriptionData)">通  过</el-button>
+              <el-button type="danger" @click="handleClickUnPass(prescriptionData)">不通过</el-button>
+              <el-button @click="handleCloseView">关 闭</el-button>
+            </div>
+            <div v-else>
+              <el-button @click="handleCloseView">关 闭</el-button>
+            </div>
           </div>
           <div v-else-if="roleFlag === false">
             <el-button @click="handleCloseView">关 闭</el-button>
@@ -215,6 +220,7 @@ export default {
       receiverList: [],
       roleList: [],
       roleFlag: false,
+      verifyStatus: '',
       orgList: [],
       prescriptionData: Object,
       loading: false,
@@ -280,9 +286,11 @@ export default {
     handleClickView (row) {
       this.dialogTableVisible = true
       this.prescriptionData = row
+      this.verifyStatus = row.verify
     },
     handleCloseView () {
       this.dialogTableVisible = false
+      this.verifyStatus = ''
     },
     handleCirculateDialog (row) {
       if (row.verify !== 1 || row.flag !== 1 || row.enable !== 1) {
