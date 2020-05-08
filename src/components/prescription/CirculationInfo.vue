@@ -186,6 +186,11 @@ export default {
         if (window.sessionStorage.getItem('name') === row.senderName) {
           this.roleFlag = false
         }
+        if (window.sessionStorage.getItem('name') === row.receiverName) {
+          if (row.acceptStatus === -1 || row.acceptStatus === 9) {
+            return this.$message.error('该处方已失效, 不可被查看')
+          }
+        }
         this.dialogTableVisible = true
         this.circulation_info_id = row.id
         this.acceptStatus = row.acceptStatus
