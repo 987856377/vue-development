@@ -26,13 +26,13 @@
         </el-table-column>
         <el-table-column prop="address" label="地址" width="120" align="center">
         </el-table-column>
-        <el-table-column prop="postcode" label="邮编" width="120" align="center">
+        <el-table-column prop="postcode" label="邮编" width="80" align="center">
         </el-table-column>
-        <el-table-column prop="phone" label="联系电话" width="120" align="center">
+        <el-table-column prop="phone" label="联系电话" width="100" align="center">
         </el-table-column>
-        <el-table-column prop="mail" label="机构邮箱" width="120" align="center">
+        <el-table-column prop="mail" label="机构邮箱" width="160" align="center">
         </el-table-column>
-        <el-table-column prop="officer" label="法人代表" width="120" align="center">
+        <el-table-column prop="officer" label="法人代表" width="80" align="center">
         </el-table-column>
         <el-table-column prop="classify" label="机构类别" width="120" align="center">
           <template slot-scope="scope">
@@ -269,7 +269,9 @@ export default {
     },
     async getOrgList () {
       this.loading = true
-      await this.$axios.post('organization/getOrgList', {'page': this.page}).then(result => {
+      await this.$axios.post('organization/getOrgList', {
+        // 'orgflag': window.sessionStorage.getItem('orgFlag'),/* 获取本机构及下级机构信息则传递 orgflag 参数, 不传递则获取所有机构 */
+        'page': this.page}).then(result => {
         if (result.data.code === 200) {
           this.current = result.data.data.current
           this.size = result.data.data.size
@@ -295,12 +297,20 @@ export default {
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
           this.loading = true
+          if (row.flag === 1) row.flag = 0
+          else if (row.flag === 0) row.flag = 1
+          else if (row.flag === 9) row.flag = 1
           await this.$axios.post('organization/cancelOrg', {'name': row.name, 'flag': row.flag}).then(result => {
-            this.loading = false
-            if (row.flag === 1) row.flag = 0
-            else if (row.flag === 0) row.flag = 1
-            else if (row.flag === 9) row.flag = 1
-            return this.$message({ type: 'success', message: '更新机构状态成功!' })
+            if (result.data.code === 200) {
+              this.loading = false
+              return this.$message({ type: 'success', message: '更新机构状态成功!' })
+            } else {
+              this.loading = false
+              if (row.flag === 1) row.flag = 0
+              else if (row.flag === 0) row.flag = 1
+              else if (row.flag === 9) row.flag = 1
+              return this.$message({type: 'error', message: '更新机构状态失败: ' + result.data.message})
+            }
             // eslint-disable-next-line handle-callback-err
           }).catch(error => {
             this.loading = false
