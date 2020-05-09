@@ -434,6 +434,12 @@ export default {
               return this.$message({ type: 'success', message: '更新处方状态成功!' })
             } else {
               this.loading = false
+              if (row.flag === 0) {
+                row.flag = 1
+                row.enable = 1
+              } else if (row.flag === 1) {
+                row.flag = 0
+              }
               return this.$message({ type: 'error', message: '更新处方状态失败: ' + result.data.message })
             }
             // eslint-disable-next-line handle-callback-err
@@ -464,6 +470,8 @@ export default {
               return this.$message({ type: 'success', message: '更新处方流转状态成功!' })
             } else {
               this.loading = false
+              if (row.enable === 1) row.enable = 0
+              else if (row.enable === 0) row.enable = 1
               return this.$message({ type: 'error', message: '更新处方流转状态失败: ' + result.data.message })
             }
             // eslint-disable-next-line handle-callback-err

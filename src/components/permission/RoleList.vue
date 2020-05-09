@@ -114,15 +114,17 @@ export default {
       this.$confirm(msg, '提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning', center: true })
         .then(async () => {
           this.loading = true
+          if (row.flag === 1) row.flag = 0
+          else if (row.flag === 0) row.flag = 1
           await this.$axios.post('role/updateRoleState', {'id': row.id, 'flag': row.flag}).then(result => {
             if (result.data.code === 200) {
-              if (row.flag === 1) row.flag = 0
-              else if (row.flag === 0) row.flag = 1
               this.loading = false
               return this.$message({ type: 'success', message: '更新角色状态成功!' })
             } else {
               // eslint-disable-next-line standard/object-curly-even-spacing
               this.loading = false
+              if (row.flag === 1) row.flag = 0
+              else if (row.flag === 0) row.flag = 1
               return this.$message({type: 'error', message: '添加角色失败: ' + result.data.message})
             }
             // eslint-disable-next-line handle-callback-err
