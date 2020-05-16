@@ -173,11 +173,6 @@ export default {
       await this.$axios.post('userrole/getRoleList', {'uid': window.sessionStorage.getItem('id')}).then(result => {
         if (result.data.code === 200) {
           this.roleList = result.data.data
-          this.roleList.forEach(item => {
-            if (item.code === 'AUDIT') {
-              this.roleFlag = true
-            }
-          })
         }
         // eslint-disable-next-line handle-callback-err
       }).catch(error => {
@@ -194,6 +189,11 @@ export default {
           if (row.acceptStatus === -1 || row.acceptStatus === 9) {
             return this.$message.error('该处方已失效, 不可被查看')
           }
+          this.roleList.forEach(item => {
+            if (item.code === 'AUDIT') {
+              this.roleFlag = true
+            }
+          })
         }
         this.dialogTableVisible = true
         this.circulation_info_id = row.id
