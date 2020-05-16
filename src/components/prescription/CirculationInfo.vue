@@ -108,6 +108,9 @@
               <el-button @click="handleCloseView">关  闭</el-button>
             </div>
           </div>
+          <div v-else>
+            <el-button @click="handleCloseView">关  闭</el-button>
+          </div>
         </div>
       </el-dialog>
     </el-card>
@@ -126,7 +129,7 @@ export default {
         code: ''
       },
       roleList: [],
-      roleFlag: false,
+      roleFlag: '',
       circulation_info_id: '',
       acceptStatus: '',
       prescriptionData: Object,
@@ -182,11 +185,12 @@ export default {
       })
     },
     async handleClickView (row) {
-      if (window.sessionStorage.getItem('name') === row.receiverName || window.sessionStorage.getItem('name') === row.senderName) {
-        if (window.sessionStorage.getItem('name') === row.senderName) {
+      let name = window.sessionStorage.getItem('name')
+      if (name === row.receiverName || name === row.senderName) {
+        if (name === row.senderName) {
           this.roleFlag = false
         }
-        if (window.sessionStorage.getItem('name') === row.receiverName) {
+        if (name === row.receiverName) {
           if (row.acceptStatus === -1 || row.acceptStatus === 9) {
             return this.$message.error('该处方已失效, 不可被查看')
           }
